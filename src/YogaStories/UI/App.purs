@@ -5,8 +5,8 @@ import Prelude
 import Yoga.JSON (writeJSON)
 import YogaStories.Types (StoryModule)
 
-renderShell :: Array StoryModule -> String
-renderShell stories =
+renderHtml :: Array StoryModule -> String
+renderHtml stories =
   """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,27 +14,11 @@ renderShell stories =
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>yoga-stories</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-  {
-    "imports": {
-      "react": "https://esm.sh/react@19?dev",
-      "react-dom": "https://esm.sh/react-dom@19?dev",
-      "react-dom/client": "https://esm.sh/react-dom@19/client?dev",
-      "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime?dev",
-      "leva": "https://esm.sh/leva@0.9?dev&external=react,react-dom",
-      "react-spring": "https://esm.sh/react-spring@9?dev&external=react,react-dom",
-      "@react-spring/web": "https://esm.sh/@react-spring/web@9?dev&external=react,react-dom"
-    }
-  }
-  </script>
 </head>
 <body class="m-0 bg-slate-900 text-slate-200 font-sans">
   <script id="stories-data" type="application/json">""" <> writeJSON stories <>
     """</script>
   <div id="app"></div>
-  <script type="module">
-    import { clientMain } from "/output/YogaStories.UI.Client/index.js";
-    clientMain();
-  </script>
+  <script src="client.js" type="module"></script>
 </body>
 </html>"""
