@@ -7,11 +7,11 @@ import Effect (Effect)
 import Effect.Aff (launchAff_, never)
 import Effect.Class.Console as Console
 import Node.Encoding (Encoding(..))
-import Node.FS.Aff (mkdir', writeTextFile)
+import Node.FS.Aff (mkdir', readTextFile, writeTextFile)
 import Node.FS.Perms (permsAll)
+import Yoga.JSON (writeJSON)
 import YogaStories.Resolution (discoverStories)
 import YogaStories.Server (startServer)
-import YogaStories.UI.App (renderHtml)
 
 main :: Effect Unit
 main = launchAff_ do
@@ -24,7 +24,9 @@ main = launchAff_ do
   stories <- discoverStories config
   Console.log ("Discovered " <> show (length stories) <> " story modules")
   mkdir' "./dist" { recursive: true, mode: permsAll }
-  writeTextFile UTF8 "./dist/index.html" (renderHtml stories)
-  Console.log "Wrote dist/index.html"
-  startServer "./dist" 9010
+  indexHtml <- readTextFile UTF8 "./static/index.html"
+  writeTextFile UTF8 "./dist/index.html" indexHtml
+  writeTextFile UTF8 "./dist/stories.json" (writeJSON stories)
+  Console.log "Wrote dist/index.html and dist/stories.json"
+  startServer { distDir: "./dist" } 9010
   never

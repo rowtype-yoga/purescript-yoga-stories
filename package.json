@@ -4,14 +4,18 @@
   "type": "module",
   "scripts": {
     "build": "spago build && bun run bundle",
-    "bundle": "bun build output/YogaStories.UI.Client/index.js --outfile dist/client.js --format esm",
+    "bundle": "bun build output/YogaStories.UI.Client/index.js --outdir dist --entry-naming client.js --format esm --sourcemap=linked --external react --external react-dom --external leva && bun run build-vendor.js && bunx @tailwindcss/cli --input static/styles.css --output dist/styles.css",
     "test": "spago test",
     "start": "bun run build && bun -e 'import { main } from \"./output/Main/index.js\"; main();'"
   },
   "dependencies": {
     "fastify": "^5.0.0",
     "leva": "^0.9.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "18",
+    "react-dom": "18"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "tailwindcss": "^4.1.18"
   }
 }

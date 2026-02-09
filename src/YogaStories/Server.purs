@@ -13,20 +13,24 @@ import Node.Encoding (Encoding(..))
 import Node.FS.Aff (readTextFile)
 import Yoga.Fastify.Fastify as F
 
-startServer :: String -> Int -> Aff Unit
-startServer distDir port = do
+startServer :: { distDir :: String } -> Int -> Aff Unit
+startServer { distDir } port = do
   app <- liftEffect do
     f <- F.fastify {}
-    F.get (F.RouteURL "/*") (staticHandler distDir) f
+    F.get (F.RouteURL "/*") (staticHandler) f
     pure f
   address <- F.listen { port: F.Port port } app
   Console.log ("yoga-stories running at " <> address)
   where
-  staticHandler dir req reply = do
+  staticHandler req reply = do
     reqUrl <- liftEffect $ F.url req
     let path = un F.RouteURL reqUrl
-    let filePath = dir <> if path == "/" then "/index.html" else path
-    let contentType = mimeType path
+    let
+      filePath
+        | String.contains (String.Pattern "/output/") path = "." <> path
+        | path == "/" = distDir <> "/index.html"
+        | otherwise = distDir <> path
+    let contentType = mimeType filePath
     result <- attempt (readTextFile UTF8 filePath)
     case result of
       Right content -> do
@@ -38,6 +42,7 @@ startServer distDir port = do
 
   mimeType path
     | String.contains (String.Pattern ".html") path = "text/html; charset=utf-8"
+    | String.contains (String.Pattern ".json") path = "application/json"
     | String.contains (String.Pattern ".js.map") path = "application/json"
     | String.contains (String.Pattern ".js") path = "application/javascript"
     | String.contains (String.Pattern ".css") path = "text/css"

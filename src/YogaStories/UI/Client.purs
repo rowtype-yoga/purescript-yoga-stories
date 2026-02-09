@@ -25,7 +25,7 @@ import YogaStories.Types (StoryModule)
 
 -- FFI
 foreign import dynamicImportImpl :: String -> Effect (Promise Foreign)
-foreign import getStoryDataImpl :: Effect (Array StoryModule)
+foreign import fetchStoryDataImpl :: Effect (Promise (Array StoryModule))
 foreign import unsafeGetPropertyImpl :: EffectFn2 String Foreign JSX
 foreign import getElementByIdImpl :: String -> Effect Element
 
@@ -34,11 +34,12 @@ unsafeGetProperty = runEffectFn2 unsafeGetPropertyImpl
 
 -- Entry point (called from browser)
 clientMain :: Effect Unit
-clientMain = do
-  stories <- getStoryDataImpl
-  el <- getElementByIdImpl "app"
-  root <- createRoot el
-  renderRoot root (mkApp stories)
+clientMain = launchAff_ do
+  stories <- toAffE fetchStoryDataImpl
+  liftEffect do
+    el <- getElementByIdImpl "app"
+    root <- createRoot el
+    renderRoot root (app stories)
 
 -- Types
 type Selection = { moduleName :: Maybe String, exportName :: Maybe String }
@@ -47,31 +48,29 @@ noSelection :: Selection
 noSelection = { moduleName: Nothing, exportName: Nothing }
 
 -- App
-mkApp :: Array StoryModule -> JSX
-mkApp = appComponent
-  where
-  appComponent = component "App" \stories -> React.do
-    sel /\ setSel <- React.useState noSelection
-    pure $
-      div { className: "min-h-screen flex flex-col" }
-        [ h1 { className: "px-6 py-4 m-0 border-b border-slate-700 text-lg font-semibold text-indigo-400" }
-            "yoga-stories"
-        , div { className: "flex flex-1" }
-            [ mkSidebar
-                { stories
-                , selected: sel
-                , onSelect: \m e -> setSel \_ -> { moduleName: Just m, exportName: Just e }
-                }
-            , mkMainPanel
-                { selected: sel
-                , stories
-                }
-            ]
-        ]
+app :: Array StoryModule -> JSX
+app = component "App" \stories -> React.do
+  sel /\ setSel <- React.useState noSelection
+  pure $
+    div { className: "min-h-screen flex flex-col" }
+      [ h1 { className: "px-6 py-4 m-0 border-b border-slate-700 text-lg font-semibold text-indigo-400" }
+          "yoga-stories"
+      , div { className: "flex flex-1" }
+          [ sidebar
+              { stories
+              , selected: sel
+              , onSelect: \m e -> setSel \_ -> { moduleName: Just m, exportName: Just e }
+              }
+          , mainPanel
+              { selected: sel
+              , stories
+              }
+          ]
+      ]
 
 -- Sidebar
-mkSidebar :: { stories :: Array StoryModule, selected :: Selection, onSelect :: String -> String -> Effect Unit } -> JSX
-mkSidebar = component "Sidebar" \props -> React.do
+sidebar :: { stories :: Array StoryModule, selected :: Selection, onSelect :: String -> String -> Effect Unit } -> JSX
+sidebar = component "Sidebar" \props -> React.do
   pure $
     nav { className: "w-64 border-r border-slate-700 overflow-y-auto py-3 shrink-0" }
       [ h2 { className: "text-xs uppercase tracking-widest text-slate-500 px-4 mb-2" } "Stories"
@@ -98,8 +97,8 @@ mkSidebar = component "Sidebar" \props -> React.do
       (text expName)
 
 -- Main panel
-mkMainPanel :: { selected :: Selection, stories :: Array StoryModule } -> JSX
-mkMainPanel = component "MainPanel" \props -> React.do
+mainPanel :: { selected :: Selection, stories :: Array StoryModule } -> JSX
+mainPanel = component "MainPanel" \props -> React.do
   loaded /\ setLoaded <- React.useState (Nothing :: Maybe { name :: String, mod :: Foreign })
 
   React.useEffect props.selected.moduleName do
@@ -122,7 +121,7 @@ mkMainPanel = component "MainPanel" \props -> React.do
         Just l ->
           div { className: "flex-1 overflow-y-auto p-6" }
             [ h3 { className: "text-indigo-400 text-base m-0 mb-4" } (text key)
-            , mkStoryView { mod: l.mod, exportName: expName }
+            , storyView { mod: l.mod, exportName: expName }
             , sourceView info
             ]
     _, _ ->
@@ -130,8 +129,8 @@ mkMainPanel = component "MainPanel" \props -> React.do
         (text "Select a story")
 
 -- Renders a single story export
-mkStoryView :: { mod :: Foreign, exportName :: String } -> JSX
-mkStoryView = component "StoryView" \props -> React.do
+storyView :: { mod :: Foreign, exportName :: String } -> JSX
+storyView = component "StoryView" \props -> React.do
   jsx <- unsafeRenderEffect $ unsafeGetProperty props.exportName props.mod
   pure $
     div { className: "bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6" }
