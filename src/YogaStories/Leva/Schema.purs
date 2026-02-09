@@ -8,15 +8,20 @@ module YogaStories.Leva.Schema
   , class SchemaToProps
   , class ReadProps
   , readProps
+  , class GenericToString
+  , genericToString
+  , class GenericFromString
+  , genericFromString
   , writeSchema
   ) where
 
 import Prelude
 
-import Data.Maybe (Maybe)
+import Data.Generic.Rep (class Generic, Constructor(..), NoArguments(..), Sum(Inl, Inr), from, to)
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (un)
 import Data.Nullable as Nullable
-import Data.Symbol (class IsSymbol)
+import Data.Symbol (class IsSymbol, reflectSymbol)
 import Foreign (Foreign, unsafeFromForeign, unsafeToForeign)
 import Prim.Row as Row
 import Prim.RowList (class RowToList, Cons, Nil, RowList)
@@ -24,7 +29,7 @@ import Record (get)
 import Record.Builder (Builder)
 import Record.Builder as Builder
 import Type.Proxy (Proxy(..))
-import YogaStories.Leva.Controls (Color(..), Select(..), Slider(..))
+import YogaStories.Leva.Controls (Color(..), Enum(..), Select(..), Slider(..))
 
 class ToLevaSchema :: Type -> Type -> Constraint
 class ToLevaSchema schema value | schema -> value where
@@ -63,6 +68,39 @@ instance ToLevaSchema (Maybe Int) (Maybe Int) where
 instance ToLevaSchema (Maybe Boolean) (Maybe Boolean) where
   toLevaSchema = unsafeToForeign <<< Nullable.toNullable
 
+instance (Generic a rep, GenericToString rep) => ToLevaSchema (Enum a) a where
+  toLevaSchema (Enum e) = unsafeToForeign
+    { value: genericToString (from e.value)
+    , options: e.options
+    }
+
+class GenericToString :: Type -> Constraint
+class GenericToString rep where
+  genericToString :: rep -> String
+
+instance (IsSymbol name) => GenericToString (Constructor name NoArguments) where
+  genericToString _ = reflectSymbol (Proxy :: Proxy name)
+
+instance (GenericToString a, GenericToString b) => GenericToString (Sum a b) where
+  genericToString (Inl a) = genericToString a
+  genericToString (Inr b) = genericToString b
+
+class GenericFromString :: Type -> Constraint
+class GenericFromString rep where
+  genericFromString :: String -> Maybe rep
+
+instance (IsSymbol name) => GenericFromString (Constructor name NoArguments) where
+  genericFromString s
+    | s == reflectSymbol (Proxy :: Proxy name) = Just (Constructor NoArguments)
+    | otherwise = Nothing
+
+instance (GenericFromString a, GenericFromString b) => GenericFromString (Sum a b) where
+  genericFromString s = case genericFromString s of
+    Just a -> Just (Inl a)
+    Nothing -> case genericFromString s of
+      Just b -> Just (Inr b)
+      Nothing -> Nothing
+
 class FromLevaValue :: Type -> Type -> Constraint
 class FromLevaValue schemaType valueType | schemaType -> valueType where
   fromLevaValue :: Foreign -> valueType
@@ -99,6 +137,11 @@ instance FromLevaValue (Maybe Int) (Maybe Int) where
 
 instance FromLevaValue (Maybe Boolean) (Maybe Boolean) where
   fromLevaValue = Nullable.toMaybe <<< unsafeFromForeign
+
+instance (Generic a rep, GenericFromString rep) => FromLevaValue (Enum a) a where
+  fromLevaValue foreignValue = do
+    let str = unsafeFromForeign foreignValue :: String
+    fromMaybe (unsafeFromForeign foreignValue) (to <$> genericFromString str)
 
 class
   WriteSchemaFields (rl :: RowList Type) (row :: Row Type) (from :: Row Type) (to :: Row Type)
