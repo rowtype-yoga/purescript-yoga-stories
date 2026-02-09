@@ -1,0 +1,42 @@
+package:
+  name: yoga-stories
+  dependencies:
+    - aff
+    - arrays
+    - console
+    - effect
+    - either
+    - foldable-traversable
+    - foreign
+    - js-promise
+    - js-promise-aff
+    - maybe
+    - newtype
+    - node-buffer
+    - node-fs
+    - node-path
+    - prelude
+    - react-basic
+    - react-basic-dom
+    - react-basic-hooks
+    - strings
+    - unsafe-coerce
+    - yoga-fastify
+    - yoga-json
+    - yoga-react
+    - yoga-react-dom
+  test:
+    main: Test.Main
+    dependencies:
+      - spec
+      - spec-discovery
+workspace:
+  packageSet:
+    registry: 73.0.0
+  extraPackages:
+    yoga-fastify:
+      path: /Users/mark/Developer/purescript-yoga-fastify
+    yoga-react:
+      path: /Users/mark/Developer/purescript-yoga-react
+    yoga-http-api: "0.1.4"
+    yoga-options: "0.1.0"

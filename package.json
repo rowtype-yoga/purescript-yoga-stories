@@ -1,0 +1,15 @@
+{
+  "name": "purescript-yoga-stories",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "spago build",
+    "test": "spago test",
+    "start": "spago build && bun -e 'import { main } from \"./output/Main/index.js\"; main();'"
+  },
+  "dependencies": {
+    "fastify": "^5.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
