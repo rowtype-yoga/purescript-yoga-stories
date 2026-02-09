@@ -1,0 +1,21 @@
+{
+  "name": "yoga-stories",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "yoga-stories": "./bin/yoga-stories.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "app/"
+  ],
+  "dependencies": {
+    "commander": "^13.0.0",
+    "vite": "^7.3.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}
