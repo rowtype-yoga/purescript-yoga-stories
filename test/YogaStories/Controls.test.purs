@@ -59,3 +59,21 @@ spec = describe "Controls" do
       let values = buildInitialValues schema
       values.name `shouldEqual` Just "world"
       values.count `shouldEqual` 10
+
+    it "handles nested records" do
+      let schema = { outer: "top", nested: { inner: "hello", num: 42.0 } }
+      let values = buildInitialValues schema
+      values.outer `shouldEqual` "top"
+      values.nested.inner `shouldEqual` "hello"
+      values.nested.num `shouldEqual` 42.0
+
+    it "handles deeply nested records" do
+      let schema = { a: { b: { c: "deep" } } }
+      let values = buildInitialValues schema
+      values.a.b.c `shouldEqual` "deep"
+
+    it "handles nested records with controls" do
+      let schema = { group: { val: slider { value: 0.5, min: 0.0, max: 1.0, step: 0.1 }, name: "test" } }
+      let values = buildInitialValues schema
+      values.group.val `shouldEqual` 0.5
+      values.group.name `shouldEqual` "test"

@@ -84,6 +84,13 @@ instance InitialValue (Maybe Int) (Maybe Int) where
 instance InitialValue (Maybe Boolean) (Maybe Boolean) where
   initialValue = identity
 
+instance
+  ( RowToList schema rl
+  , InitialValues rl schema () values
+  ) =>
+  InitialValue (Record schema) (Record values) where
+  initialValue schema = buildInitialValues schema
+
 -- InitialValues: extract initial values from a whole schema record
 
 class InitialValues :: RowList Type -> Row Type -> Row Type -> Row Type -> Constraint
@@ -299,6 +306,14 @@ instance RenderControl (Maybe Int) (Maybe Int) where
           }
     ]
 
+instance
+  ( RowToList schema rl
+  , RenderControls rl schema values
+  ) =>
+  RenderControl (Record schema) (Record values) where
+  renderControl schema lbl values setter = controlGroup lbl
+    (renderControls (Proxy :: Proxy rl) schema values setter)
+
 instance RenderControl (Maybe Boolean) (Maybe Boolean) where
   renderControl _ lbl val setter = controlRow lbl
     [ inputImpl
@@ -392,6 +407,13 @@ controlRow lbl children =
   label { className: "flex items-center gap-3 text-sm" }
     [ R.span { className: "text-slate-400 w-24 shrink-0", children: [ R.text lbl ] }
     , R.div { className: "flex items-center flex-1", children }
+    ]
+
+controlGroup :: String -> Array JSX -> JSX
+controlGroup lbl children =
+  div { className: "space-y-2" }
+    [ R.span { className: "text-xs font-medium text-slate-500 uppercase tracking-wide", children: [ R.text lbl ] }
+    , div { className: "pl-4 border-l border-slate-700 space-y-3" } children
     ]
 
 inputClass :: String
