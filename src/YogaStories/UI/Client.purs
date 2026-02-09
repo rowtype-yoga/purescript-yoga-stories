@@ -22,6 +22,7 @@ import Yoga.React (component)
 import Yoga.React.DOM.HTML (button, code, details, div, h1, h2, h3, nav, pre, summary)
 import Yoga.React.DOM.Internal (text)
 import YogaStories.Types (StoryModule)
+import YogaStories.UI.Styles as S
 
 -- FFI
 foreign import dynamicImportImpl :: String -> Effect (Promise Foreign)
@@ -52,19 +53,15 @@ app :: Array StoryModule -> JSX
 app = component "App" \stories -> React.do
   sel /\ setSel <- React.useState noSelection
   pure $
-    div { className: "min-h-screen flex flex-col" }
-      [ h1 { className: "px-6 py-4 m-0 border-b border-slate-700 text-lg font-semibold text-indigo-400" }
-          "yoga-stories"
-      , div { className: "flex flex-1" }
+    div { style: S.root }
+      [ h1 { style: S.headerBar } "yoga-stories"
+      , div { style: S.row }
           [ sidebar
               { stories
               , selected: sel
               , onSelect: \m e -> setSel \_ -> { moduleName: Just m, exportName: Just e }
               }
-          , mainPanel
-              { selected: sel
-              , stories
-              }
+          , mainPanel { selected: sel, stories }
           ]
       ]
 
@@ -72,26 +69,21 @@ app = component "App" \stories -> React.do
 sidebar :: { stories :: Array StoryModule, selected :: Selection, onSelect :: String -> String -> Effect Unit } -> JSX
 sidebar = component "Sidebar" \props -> React.do
   pure $
-    nav { className: "w-64 border-r border-slate-700 overflow-y-auto py-3 shrink-0" }
-      [ h2 { className: "text-xs uppercase tracking-widest text-slate-500 px-4 mb-2" } "Stories"
+    nav { style: S.sidebarNav }
+      [ h2 { style: S.sidebarHeading } "Stories"
       , div {} (map (moduleGroup props) props.stories)
       ]
   where
   moduleGroup props s =
     div {}
-      [ div { className: "px-4 py-1 text-xs font-semibold text-indigo-400 mt-2" }
-          (text s.moduleName)
+      [ div { style: S.moduleLabel } (text s.moduleName)
       , div {} (map (exportBtn props s.moduleName) s.exports)
       ]
 
   exportBtn props modName expName = do
-    let
-      isSelected = props.selected.moduleName == Just modName
-        && props.selected.exportName == Just expName
-      cls = "block w-full text-left px-6 py-1.5 text-sm "
-        <> if isSelected then "text-white bg-slate-800" else "text-slate-400 hover:text-indigo-300 hover:bg-slate-800"
+    let isSelected = props.selected.moduleName == Just modName && props.selected.exportName == Just expName
     button
-      { className: cls
+      { style: S.exportButton isSelected
       , onClick: handler_ (props.onSelect modName expName)
       }
       (text expName)
@@ -117,34 +109,29 @@ mainPanel = component "MainPanel" \props -> React.do
       let info = find (\s -> s.moduleName == modName) props.stories
       case loaded of
         Nothing ->
-          div { className: "flex-1 p-6 text-slate-500" } (text "Loading...")
+          div { style: S.panel <> S.muted } (text "Loading...")
         Just l ->
-          div { className: "flex-1 overflow-y-auto p-6" }
-            [ h3 { className: "text-indigo-400 text-base m-0 mb-4" } (text key)
+          div { style: S.panel }
+            [ h3 { style: S.storyTitle } (text key)
             , storyView { mod: l.mod, exportName: expName }
             , sourceView info
             ]
     _, _ ->
-      div { className: "flex-1 flex items-center justify-center text-slate-500" }
-        (text "Select a story")
+      div { style: S.panelPlaceholder } (text "Select a story")
 
 -- Renders a single story export
 storyView :: { mod :: Foreign, exportName :: String } -> JSX
 storyView = component "StoryView" \props -> React.do
   jsx <- unsafeRenderEffect $ unsafeGetProperty props.exportName props.mod
   pure $
-    div { className: "bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6" }
-      [ jsx ]
+    div { style: S.storyCard } [ jsx ]
 
 -- Source code collapsible
 sourceView :: Maybe StoryModule -> JSX
 sourceView Nothing = mempty
 sourceView (Just info) =
-  details { className: "mt-4" }
-    [ summary { className: "text-xs text-slate-500 cursor-pointer mb-2" }
-        (text ("Source: " <> info.sourcePath))
-    , pre { className: "bg-slate-950 border border-slate-700 rounded-md p-4 overflow-auto m-0" }
-        [ code { className: "font-mono text-sm leading-relaxed text-slate-300" }
-            (text info.sourceCode)
-        ]
+  details { style: S.sourceToggle }
+    [ summary { style: S.sourceSummary } (text ("Source: " <> info.sourcePath))
+    , pre { style: S.sourceBlock }
+        [ code { style: S.sourceCode } (text info.sourceCode) ]
     ]

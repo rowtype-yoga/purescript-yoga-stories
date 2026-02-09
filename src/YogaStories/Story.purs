@@ -7,8 +7,8 @@ import Prim.RowList (class RowToList)
 import React.Basic (JSX)
 import React.Basic.Hooks as React
 import Type.Proxy (Proxy(..))
+import React.Basic.DOM as R
 import Yoga.React (component)
-import Yoga.React.DOM.HTML (div)
 import YogaStories.Controls (class InitialValues, class RenderControls, buildInitialValues, controlsPanel, renderControls)
 
 story
@@ -25,7 +25,7 @@ story name comp schema = storyRenderer { name, component: comp, schema }
   storyRenderer = component "StoryRenderer" \props -> React.do
     values /\ setValues <- React.useState' (buildInitialValues props.schema)
     let controls = renderControls (Proxy :: Proxy rl) props.schema values setValues
-    pure $ div {}
+    pure $ R.div_
       [ props.component values
       , controlsPanel controls
       ]

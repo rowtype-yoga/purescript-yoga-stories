@@ -25,22 +25,28 @@ import Effect (Effect)
 import Prim.Row as Row
 import Prim.RowList (class RowToList, Cons, Nil, RowList)
 import React.Basic (JSX)
-import React.Basic.DOM as R
+import React.Basic.DOM (text) as R
 import React.Basic.DOM.Events (targetChecked, targetValue)
 import React.Basic.Events (handler)
 import Record (get, set)
 import Record.Builder (Builder)
 import Record.Builder as Builder
 import Type.Proxy (Proxy(..))
-import Yoga.React.DOM.HTML (div, label, option)
-import Yoga.React.DOM.HTML.Select as HtmlSelect
-import Yoga.React.DOM.Internal (text)
 import YogaStories.Controls.Types (class EnumOptions, class GenericEnumOptions, Color(..), Enum(..), Select(..), Slider(..), color, enum, enumOptions, genericEnumOptions, select, slider)
 
 -- FFI
 foreign import inputImpl :: forall r. Record r -> JSX
+foreign import elImpl :: forall r. String -> Record r -> Array JSX -> JSX
 foreign import parseFloat_ :: String -> Number
 foreign import parseInt_ :: String -> Int
+
+-- Inline-styled elements (no CSS classes leak into user components)
+
+el :: forall r. String -> Record r -> Array JSX -> JSX
+el = elImpl
+
+txt :: String -> JSX
+txt = R.text
 
 -- InitialValue: extract the default value from a control descriptor
 
@@ -126,7 +132,7 @@ instance RenderControl String String where
     [ inputImpl
         { type: "text"
         , value: val
-        , className: inputClass
+        , style: inputStyle
         , onChange: handler targetValue \v -> case v of
             Just s -> setter s
             Nothing -> pure unit
@@ -138,7 +144,7 @@ instance RenderControl Number Number where
     [ inputImpl
         { type: "number"
         , value: show val
-        , className: inputClass
+        , style: inputStyle
         , step: "any"
         , onChange: handler targetValue \v -> case v of
             Just s -> do
@@ -153,7 +159,7 @@ instance RenderControl Int Int where
     [ inputImpl
         { type: "number"
         , value: show val
-        , className: inputClass
+        , style: inputStyle
         , step: "1"
         , onChange: handler targetValue \v -> case v of
             Just s -> do
@@ -168,7 +174,7 @@ instance RenderControl Boolean Boolean where
     [ inputImpl
         { type: "checkbox"
         , checked: val
-        , className: "accent-indigo-500"
+        , style: { accentColor: "#6366f1" }
         , onChange: handler targetChecked \v -> case v of
             Just b -> setter b
             Nothing -> pure unit
@@ -177,34 +183,34 @@ instance RenderControl Boolean Boolean where
 
 instance RenderControl Slider Number where
   renderControl (Slider s) lbl val setter = controlRow lbl
-    [ div { className: "flex items-center gap-2 flex-1" }
+    [ el "div" { style: { display: "flex", alignItems: "center", gap: "8px", flex: "1" } }
         [ inputImpl
             { type: "range"
             , min: show s.min
             , max: show s.max
             , step: show s.step
             , value: show val
-            , className: "flex-1 accent-indigo-500"
+            , style: { flex: "1", accentColor: "#6366f1" }
             , onChange: handler targetValue \v -> case v of
                 Just str -> do
                   let n = parseFloat_ str
                   when (n == n) (setter n)
                 Nothing -> pure unit
             }
-        , R.span { className: "text-xs text-slate-400 w-12 text-right", children: [ R.text (show val) ] }
+        , el "span" { style: { fontSize: "11px", color: "#94a3b8", width: "48px", textAlign: "right" } } [ txt (show val) ]
         ]
     ]
 
 instance RenderControl (Select String) String where
   renderControl (Select s) lbl val setter = controlRow lbl
-    [ HtmlSelect.select
+    [ el "select"
         { value: val
-        , className: inputClass
+        , style: selectStyle
         , onChange: handler targetValue \v -> case v of
             Just str -> setter str
             Nothing -> pure unit
         }
-        (map (\opt -> option { value: opt } (text opt)) s.options)
+        (map (\opt -> el "option" { value: opt } [ txt opt ]) s.options)
     ]
 
 instance RenderControl Color String where
@@ -212,26 +218,26 @@ instance RenderControl Color String where
     [ inputImpl
         { type: "color"
         , value: val
-        , className: "w-8 h-8 rounded border border-slate-600 bg-transparent cursor-pointer"
+        , style: { width: "32px", height: "32px", borderRadius: "4px", border: "1px solid #475569", background: "transparent", cursor: "pointer", padding: "0" }
         , onChange: handler targetValue \v -> case v of
             Just s -> setter s
             Nothing -> pure unit
         }
-    , R.span { className: "text-xs text-slate-400 ml-2", children: [ R.text val ] }
+    , el "span" { style: { fontSize: "11px", color: "#94a3b8", marginLeft: "8px" } } [ txt val ]
     ]
 
 instance (Generic a rep, GenericToString rep, GenericFromString rep, EnumOptions a) => RenderControl (Enum a) a where
   renderControl _ lbl val setter = controlRow lbl
-    [ HtmlSelect.select
+    [ el "select"
         { value: genericToString (from val)
-        , className: inputClass
+        , style: selectStyle
         , onChange: handler targetValue \v -> case v of
             Just str -> case to <$> genericFromString str of
               Just a -> setter a
               Nothing -> pure unit
             Nothing -> pure unit
         }
-        (map (\opt -> option { value: opt } (text opt)) (enumOptions (Proxy :: Proxy a)))
+        (map (\opt -> el "option" { value: opt } [ txt opt ]) (enumOptions (Proxy :: Proxy a)))
     ]
 
 instance RenderControl (Maybe String) (Maybe String) where
@@ -239,17 +245,17 @@ instance RenderControl (Maybe String) (Maybe String) where
     [ inputImpl
         { type: "checkbox"
         , checked: isJust val
-        , className: "accent-indigo-500 mr-2"
+        , style: { accentColor: "#6366f1", marginRight: "8px" }
         , onChange: handler targetChecked \v -> case v of
             Just true -> setter (Just "")
             _ -> setter Nothing
         }
     , case val of
-        Nothing -> R.text ""
+        Nothing -> txt ""
         Just s -> inputImpl
           { type: "text"
           , value: s
-          , className: inputClass
+          , style: inputStyle
           , onChange: handler targetValue \v -> case v of
               Just str -> setter (Just str)
               Nothing -> pure unit
@@ -261,18 +267,18 @@ instance RenderControl (Maybe Number) (Maybe Number) where
     [ inputImpl
         { type: "checkbox"
         , checked: isJust val
-        , className: "accent-indigo-500 mr-2"
+        , style: { accentColor: "#6366f1", marginRight: "8px" }
         , onChange: handler targetChecked \v -> case v of
             Just true -> setter (Just 0.0)
             _ -> setter Nothing
         }
     , case val of
-        Nothing -> R.text ""
+        Nothing -> txt ""
         Just n -> inputImpl
           { type: "number"
           , value: show n
           , step: "any"
-          , className: inputClass
+          , style: inputStyle
           , onChange: handler targetValue \v -> case v of
               Just str -> do
                 let num = parseFloat_ str
@@ -286,18 +292,18 @@ instance RenderControl (Maybe Int) (Maybe Int) where
     [ inputImpl
         { type: "checkbox"
         , checked: isJust val
-        , className: "accent-indigo-500 mr-2"
+        , style: { accentColor: "#6366f1", marginRight: "8px" }
         , onChange: handler targetChecked \v -> case v of
             Just true -> setter (Just 0)
             _ -> setter Nothing
         }
     , case val of
-        Nothing -> R.text ""
+        Nothing -> txt ""
         Just n -> inputImpl
           { type: "number"
           , value: show n
           , step: "1"
-          , className: inputClass
+          , style: inputStyle
           , onChange: handler targetValue \v -> case v of
               Just str -> do
                 let num = parseInt_ str
@@ -319,17 +325,17 @@ instance RenderControl (Maybe Boolean) (Maybe Boolean) where
     [ inputImpl
         { type: "checkbox"
         , checked: isJust val
-        , className: "accent-indigo-500 mr-2"
+        , style: { accentColor: "#6366f1", marginRight: "8px" }
         , onChange: handler targetChecked \v -> case v of
             Just true -> setter (Just false)
             _ -> setter Nothing
         }
     , case val of
-        Nothing -> R.text ""
+        Nothing -> txt ""
         Just b -> inputImpl
           { type: "checkbox"
           , checked: b
-          , className: "accent-indigo-500"
+          , style: { accentColor: "#6366f1" }
           , onChange: handler targetChecked \v -> case v of
               Just checked -> setter (Just checked)
               Nothing -> pure unit
@@ -395,29 +401,58 @@ instance (GenericFromString a, GenericFromString b) => GenericFromString (Sum a 
       Just b -> Just (Inr b)
       Nothing -> Nothing
 
--- Layout helpers
+-- Layout helpers (all inline styles, no CSS classes)
 
 controlsPanel :: Array JSX -> JSX
 controlsPanel controls =
-  div { className: "border border-slate-700 rounded-lg bg-slate-800/50 p-4 space-y-3" }
+  el "div"
+    { style:
+        { border: "1px solid #334155"
+        , borderRadius: "8px"
+        , background: "#1e293b"
+        , padding: "16px"
+        , display: "flex"
+        , flexDirection: "column"
+        , gap: "12px"
+        , fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        , fontSize: "13px"
+        , color: "#e2e8f0"
+        , boxSizing: "border-box"
+        }
+    }
     controls
 
 controlRow :: String -> Array JSX -> JSX
 controlRow lbl children =
-  label { className: "flex items-center gap-3 text-sm" }
-    [ R.span { className: "text-slate-400 w-24 shrink-0", children: [ R.text lbl ] }
-    , R.div { className: "flex items-center flex-1", children }
+  el "label"
+    { style: { display: "flex", alignItems: "center", gap: "12px" } }
+    [ el "span" { style: { color: "#94a3b8", width: "96px", flexShrink: "0" } } [ txt lbl ]
+    , el "div" { style: { display: "flex", alignItems: "center", flex: "1" } } children
     ]
 
 controlGroup :: String -> Array JSX -> JSX
 controlGroup lbl children =
-  div { className: "space-y-2" }
-    [ R.span { className: "text-xs font-medium text-slate-500 uppercase tracking-wide", children: [ R.text lbl ] }
-    , div { className: "pl-4 border-l border-slate-700 space-y-3" } children
+  el "div"
+    { style: { display: "flex", flexDirection: "column", gap: "8px" } }
+    [ el "span" { style: { fontSize: "11px", fontWeight: "500", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" } } [ txt lbl ]
+    , el "div" { style: { paddingLeft: "16px", borderLeft: "1px solid #334155", display: "flex", flexDirection: "column", gap: "12px" } } children
     ]
 
-inputClass :: String
-inputClass = "w-full bg-slate-900 border border-slate-600 rounded px-2 py-1 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none"
+inputStyle :: { width :: String, background :: String, border :: String, borderRadius :: String, padding :: String, fontSize :: String, color :: String, outline :: String, boxSizing :: String }
+inputStyle =
+  { width: "100%"
+  , background: "#0f172a"
+  , border: "1px solid #475569"
+  , borderRadius: "4px"
+  , padding: "4px 8px"
+  , fontSize: "13px"
+  , color: "#e2e8f0"
+  , outline: "none"
+  , boxSizing: "border-box"
+  }
+
+selectStyle :: { width :: String, background :: String, border :: String, borderRadius :: String, padding :: String, fontSize :: String, color :: String, outline :: String, boxSizing :: String }
+selectStyle = inputStyle
 
 isJust :: forall a. Maybe a -> Boolean
 isJust (Just _) = true

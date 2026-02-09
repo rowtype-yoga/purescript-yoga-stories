@@ -1,5 +1,5 @@
 export function dynamicImportImpl(path) {
-  return () => import(path);
+  return () => import(/* @vite-ignore */ path);
 }
 
 export function fetchStoryDataImpl() {
