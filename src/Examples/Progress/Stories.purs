@@ -3,7 +3,7 @@ module Examples.Progress.Stories where
 import React.Basic (JSX)
 import Examples.Progress (mkProgress)
 import YogaStories.Story (story)
-import YogaStories.Leva.Controls (slider, select)
+import YogaStories.Controls (slider, select)
 
 demo :: JSX
 demo = story "demo" mkProgress

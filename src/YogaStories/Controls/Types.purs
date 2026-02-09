@@ -1,4 +1,4 @@
-module YogaStories.Leva.Controls
+module YogaStories.Controls.Types
   ( Slider(..)
   , slider
   , Select(..)

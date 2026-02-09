@@ -2,25 +2,30 @@ module YogaStories.Story where
 
 import Prelude
 
+import Data.Tuple.Nested ((/\))
 import Prim.RowList (class RowToList)
 import React.Basic (JSX)
 import React.Basic.Hooks as React
+import Type.Proxy (Proxy(..))
 import Yoga.React (component)
-import YogaStories.Leva (useControls)
-import YogaStories.Leva.Schema (class WriteSchemaFields, class SchemaToProps, class ReadProps)
+import Yoga.React.DOM.HTML (div)
+import YogaStories.Controls (class InitialValues, class RenderControls, buildInitialValues, controlsPanel, renderControls)
 
 story
-  :: forall schema rl props to propsTo
+  :: forall schema rl values to
    . RowToList schema rl
-  => WriteSchemaFields rl schema () to
-  => SchemaToProps rl props
-  => ReadProps rl schema () propsTo
+  => InitialValues rl schema () to
+  => RenderControls rl schema to
   => String
-  -> (Record propsTo -> JSX)
+  -> (Record to -> JSX)
   -> Record schema
   -> JSX
 story name comp schema = storyRenderer { name, component: comp, schema }
   where
   storyRenderer = component "StoryRenderer" \props -> React.do
-    controls <- useControls props.name props.schema
-    pure $ props.component controls
+    values /\ setValues <- React.useState' (buildInitialValues props.schema)
+    let controls = renderControls (Proxy :: Proxy rl) props.schema values setValues
+    pure $ div {}
+      [ props.component values
+      , controlsPanel controls
+      ]

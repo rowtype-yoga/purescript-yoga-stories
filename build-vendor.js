@@ -10,7 +10,6 @@ writeFileSync(
     'export * as React from "react";',
     'export * as ReactDOM from "react-dom";',
     'export * as ReactDOMClient from "react-dom/client";',
-    'export * as Leva from "leva";',
   ].join("\n"),
 );
 
@@ -41,15 +40,6 @@ writeFileSync(
     'import { ReactDOMClient } from "./vendor.js";',
     "export default ReactDOMClient;",
     "export const { createRoot, hydrateRoot } = ReactDOMClient;",
-  ].join("\n"),
-);
-
-writeFileSync(
-  "dist/vendor/leva.js",
-  [
-    'import { Leva } from "./vendor.js";',
-    "export const { useControls, button, buttonGroup, folder, monitor } = Leva;",
-    "export default Leva;",
   ].join("\n"),
 );
 

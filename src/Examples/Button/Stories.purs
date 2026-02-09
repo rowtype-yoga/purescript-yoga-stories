@@ -3,7 +3,7 @@ module Examples.Button.Stories where
 import Data.Maybe (Maybe(..))
 import React.Basic (JSX)
 import Examples.Button (Variant(..), mkButton)
-import YogaStories.Leva.Controls (enum)
+import YogaStories.Controls (enum)
 import YogaStories.Story (story)
 
 primary :: JSX
