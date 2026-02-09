@@ -1,4 +1,17 @@
-module YogaStories.Leva.Controls where
+module YogaStories.Leva.Controls
+  ( Slider(..)
+  , slider
+  , Select(..)
+  , select
+  , Color(..)
+  , color
+  , Enum(..)
+  , enum
+  , class EnumOptions
+  , enumOptions
+  , class GenericEnumOptions
+  , genericEnumOptions
+  ) where
 
 import Prelude
 
