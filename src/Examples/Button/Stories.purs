@@ -2,14 +2,13 @@ module Examples.Button.Stories where
 
 import React.Basic (JSX)
 import Examples.Button (mkButton)
+import YogaStories.Story (story)
 
-type Story = { component :: { label :: String, variant :: String } -> JSX, defaults :: { label :: String, variant :: String } }
+primary :: JSX
+primary = story "primary" mkButton { label: "Submit", variant: "primary" }
 
-primary :: Story
-primary = { component: mkButton, defaults: { label: "Submit", variant: "primary" } }
+danger :: JSX
+danger = story "danger" mkButton { label: "Delete", variant: "danger" }
 
-danger :: Story
-danger = { component: mkButton, defaults: { label: "Delete", variant: "danger" } }
-
-secondary :: Story
-secondary = { component: mkButton, defaults: { label: "Cancel", variant: "secondary" } }
+secondary :: JSX
+secondary = story "secondary" mkButton { label: "Cancel", variant: "secondary" }

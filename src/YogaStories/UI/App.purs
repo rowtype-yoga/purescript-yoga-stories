@@ -45,53 +45,34 @@ clientScript :: String -> String
 clientScript storiesJson = intercalate "\n"
   [ "import React from 'react';"
   , "import { createRoot } from 'react-dom/client';"
-  , "import { useControls, Leva } from 'leva';"
   , ""
   , "const { useState, useEffect, createElement: h } = React;"
-  , ""
   , "const STORIES = " <> storiesJson <> ";"
   , ""
-  , """
-// Load a story module dynamically
+  , clientApp
+  ]
+
+clientApp :: String
+clientApp =
+  """
 async function loadStoryModule(moduleName) {
-  const dirName = moduleName.replace(/\./g, '.');
-  const mod = await import(`/output/${dirName}/index.js`);
-  return mod;
+  return await import(`/output/${moduleName}/index.js`);
 }
 
-// Component that renders a single story with leva controls
-function StoryRenderer({ storyExport, storyName }) {
-  const defaults = storyExport.defaults || {};
-  const controls = useControls(storyName, defaults);
-  return h('div', { className: 'p-4' },
-    h(StoryComponent, { component: storyExport.component, props: controls })
-  );
-}
-
-// Wrapper to catch render errors
-function StoryComponent({ component, props }) {
-  try {
-    return component(props);
-  } catch(e) {
-    return h('div', { className: 'text-red-400 p-4 bg-red-950 rounded' }, 'Render error: ' + e.message);
-  }
-}
-
-// Sidebar
 function Sidebar({ stories, selected, onSelect }) {
   return h('nav', { className: 'w-64 border-r border-slate-700 overflow-y-auto py-3 shrink-0' },
     h('h2', { className: 'text-xs uppercase tracking-widest text-slate-500 px-4 mb-2' }, 'Stories'),
-    stories.map(story =>
-      h('div', { key: story.moduleName },
-        h('div', { className: 'px-4 py-1 text-xs font-semibold text-indigo-400 mt-2' }, story.moduleName),
-        story.exports.map(exp =>
+    stories.map(s =>
+      h('div', { key: s.moduleName },
+        h('div', { className: 'px-4 py-1 text-xs font-semibold text-indigo-400 mt-2' }, s.moduleName),
+        s.exports.map(exp =>
           h('button', {
             key: exp,
             className: 'block w-full text-left px-6 py-1.5 text-sm ' +
-              (selected === story.moduleName + '.' + exp
+              (selected === s.moduleName + '.' + exp
                 ? 'text-white bg-slate-800'
                 : 'text-slate-400 hover:text-indigo-300 hover:bg-slate-800'),
-            onClick: () => onSelect(story.moduleName, exp)
+            onClick: () => onSelect(s.moduleName, exp)
           }, exp)
         )
       )
@@ -99,7 +80,6 @@ function Sidebar({ stories, selected, onSelect }) {
   );
 }
 
-// Main panel showing the selected story
 function MainPanel({ selectedModule, selectedExport, storyModules }) {
   const [mod, setMod] = useState(null);
   const [error, setError] = useState(null);
@@ -111,64 +91,43 @@ function MainPanel({ selectedModule, selectedExport, storyModules }) {
     loadStoryModule(selectedModule).then(setMod).catch(e => setError(e.message));
   }, [selectedModule]);
 
-  if (!selectedModule) {
-    return h('div', { className: 'flex-1 flex items-center justify-center text-slate-500' },
-      'Select a story from the sidebar'
-    );
-  }
+  if (!selectedModule)
+    return h('div', { className: 'flex-1 flex items-center justify-center text-slate-500' }, 'Select a story');
 
-  if (error) {
+  if (error)
     return h('div', { className: 'flex-1 p-6 text-red-400' }, 'Failed to load: ' + error);
-  }
 
-  if (!mod) {
+  if (!mod)
     return h('div', { className: 'flex-1 p-6 text-slate-500' }, 'Loading...');
-  }
 
-  const storyExport = mod[selectedExport];
-  if (!storyExport) {
-    return h('div', { className: 'flex-1 p-6 text-red-400' }, 'Export "' + selectedExport + '" not found');
-  }
+  const jsx = mod[selectedExport];
+  if (!jsx)
+    return h('div', { className: 'flex-1 p-6 text-red-400' }, `Export "${selectedExport}" not found`);
 
-  const storyInfo = storyModules.find(s => s.moduleName === selectedModule);
+  const info = storyModules.find(s => s.moduleName === selectedModule);
   const key = selectedModule + '.' + selectedExport;
 
-  return h('div', { className: 'flex-1 overflow-y-auto' },
-    h('div', { className: 'p-6' },
-      h('h3', { className: 'text-indigo-400 text-base m-0 mb-4' }, key),
-      h('div', { className: 'bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6' },
-        h(StoryRenderer, { key, storyExport, storyName: key })
-      ),
-      storyInfo ? h('details', { className: 'mt-4' },
-        h('summary', { className: 'text-xs text-slate-500 cursor-pointer mb-2' }, 'Source: ' + storyInfo.sourcePath),
-        h('pre', { className: 'bg-slate-950 border border-slate-700 rounded-md p-4 overflow-auto m-0' },
-          h('code', { className: 'font-mono text-sm leading-relaxed text-slate-300' }, storyInfo.sourceCode)
-        )
-      ) : null
-    )
+  return h('div', { className: 'flex-1 overflow-y-auto p-6' },
+    h('h3', { className: 'text-indigo-400 text-base m-0 mb-4' }, key),
+    h('div', { key, className: 'bg-slate-800 border border-slate-700 rounded-lg p-6 mb-6' }, jsx),
+    info ? h('details', { className: 'mt-4' },
+      h('summary', { className: 'text-xs text-slate-500 cursor-pointer mb-2' }, 'Source: ' + info.sourcePath),
+      h('pre', { className: 'bg-slate-950 border border-slate-700 rounded-md p-4 overflow-auto m-0' },
+        h('code', { className: 'font-mono text-sm leading-relaxed text-slate-300' }, info.sourceCode))
+    ) : null
   );
 }
 
-// App
 function App() {
-  const [selectedModule, setSelectedModule] = useState(null);
-  const [selectedExport, setSelectedExport] = useState(null);
-
-  const handleSelect = (mod, exp) => {
-    setSelectedModule(mod);
-    setSelectedExport(exp);
-  };
-
+  const [sel, setSel] = useState({ mod: null, exp: null });
   return h('div', { className: 'min-h-screen flex flex-col' },
     h('h1', { className: 'px-6 py-4 m-0 border-b border-slate-700 text-lg font-semibold text-indigo-400' }, 'yoga-stories'),
     h('div', { className: 'flex flex-1' },
-      h(Sidebar, { stories: STORIES, selected: selectedModule + '.' + selectedExport, onSelect: handleSelect }),
-      h(MainPanel, { selectedModule, selectedExport, storyModules: STORIES }),
-      h(Leva, { collapsed: false, titleBar: { title: 'Props' } })
+      h(Sidebar, { stories: STORIES, selected: sel.mod + '.' + sel.exp, onSelect: (m, e) => setSel({ mod: m, exp: e }) }),
+      h(MainPanel, { selectedModule: sel.mod, selectedExport: sel.exp, storyModules: STORIES })
     )
   );
 }
 
 createRoot(document.getElementById('app')).render(h(App));
 """
-  ]
