@@ -3,11 +3,13 @@ module Examples.Button.Stories where
 import React.Basic (JSX)
 import Examples.Button (mkButton)
 
-primary :: JSX
-primary = mkButton { label: "Submit", variant: "primary" }
+type Story = { component :: { label :: String, variant :: String } -> JSX, defaults :: { label :: String, variant :: String } }
 
-danger :: JSX
-danger = mkButton { label: "Delete", variant: "danger" }
+primary :: Story
+primary = { component: mkButton, defaults: { label: "Submit", variant: "primary" } }
 
-secondary :: JSX
-secondary = mkButton { label: "Cancel", variant: "secondary" }
+danger :: Story
+danger = { component: mkButton, defaults: { label: "Delete", variant: "danger" } }
+
+secondary :: Story
+secondary = { component: mkButton, defaults: { label: "Cancel", variant: "secondary" } }
