@@ -2,7 +2,9 @@ module Examples.Button where
 
 import Prelude
 
+import Data.Maybe (Maybe(..))
 import React.Basic (JSX)
+import React.Basic.DOM as R
 import Yoga.React (component)
 import Yoga.React.DOM.HTML (button)
 import Yoga.React.DOM.Internal (text)
@@ -10,12 +12,18 @@ import Yoga.React.DOM.Internal (text)
 type Props =
   { label :: String
   , variant :: String
+  , subtitle :: Maybe String
   }
 
 mkButton :: Props -> JSX
 mkButton = component "Button" \props -> React.do
-  pure $ button { className: classes props.variant }
-    (text props.label)
+  pure $ R.div_
+    [ button { className: classes props.variant }
+        (text props.label)
+    , case props.subtitle of
+        Nothing -> R.text ""
+        Just sub -> R.div { className: "text-sm text-slate-500 mt-1", children: [ R.text sub ] }
+    ]
   where
   classes "primary" = "px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-500"
   classes "danger" = "px-4 py-2 bg-red-600 text-white rounded-md font-medium hover:bg-red-500"
