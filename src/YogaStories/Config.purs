@@ -14,7 +14,7 @@ import YogaStories.Types (Config)
 defaultConfig :: Config
 defaultConfig = do
   let outputDir = "./output"
-  let include = [ "**" ]
+  let include = [ "**.Stories" ]
   let exclude = []
   { outputDir, include, exclude }
 

@@ -11,7 +11,7 @@ main = launchAff_ do
   let
     config =
       { outputDir: "./output"
-      , include: [ "YogaStories.**", "Main" ]
+      , include: [ "**.Stories" ]
       , exclude: []
       }
   startServer config 9010

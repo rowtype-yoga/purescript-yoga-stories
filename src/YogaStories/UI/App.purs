@@ -67,4 +67,6 @@ wrapHtml body =
   <title>yoga-stories</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>""" <> body <> ""</body></html>"
+<body>"""
+    <> body
+    <> "</body></html>"

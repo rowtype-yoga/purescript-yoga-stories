@@ -1,5 +1,5 @@
 {
   "outputDir": "./output",
-  "include": ["**"],
+  "include": ["**.Stories"],
   "exclude": []
 }
