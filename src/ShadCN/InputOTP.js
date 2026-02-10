@@ -1,7 +1,7 @@
 import { OTPInput, OTPInputContext } from "input-otp"
 import { createElement, useContext } from "react"
 
-export var otpInput = OTPInput
+export const otpInput = OTPInput
 
 export function otpSlotComp(props) {
   var { index, ...rest } = props
