@@ -44,6 +44,9 @@ export async function startDevServer({
       },
       dedupe: ["react", "react-dom"],
     },
+    optimizeDeps: {
+      include: ["react", "react-dom", "react-dom/client"],
+    },
   });
 
   await server.listen();

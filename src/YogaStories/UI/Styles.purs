@@ -81,7 +81,7 @@ exportButton isSelected = css
   , width: "100%"
   , textAlign: "left"
   , padding: "6px 24px"
-  , fontSize: "14px"
+  , fontSize: "12px"
   , border: "none"
   , cursor: "pointer"
   , fontFamily: "inherit"
