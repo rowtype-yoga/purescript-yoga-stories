@@ -12,6 +12,7 @@
             "either",
             "foldable-traversable",
             "foreign",
+            "foreign-object",
             "js-promise",
             "js-promise-aff",
             "maybe",

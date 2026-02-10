@@ -7,7 +7,17 @@ module YogaStories.Controls
   , initialValues
   , class RenderControls
   , renderControls
+  , class ToParam
+  , toParam
+  , class FromParam
+  , fromParam
+  , class ToParams
+  , toParams
+  , class FromParams
+  , fromParams
   , buildInitialValues
+  , valuesToParams
+  , paramsToValues
   , controlsPanel
   , class GenericToString
   , genericToString
@@ -19,6 +29,8 @@ module YogaStories.Controls
 import Prelude
 
 import Data.Generic.Rep (class Generic, Constructor(..), NoArguments(..), Sum(Inl, Inr), from, to)
+import Foreign.Object (Object)
+import Foreign.Object as Object
 import Data.Maybe (Maybe(..))
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect (Effect)
@@ -32,6 +44,7 @@ import Record (get, set)
 import Record.Builder (Builder)
 import Record.Builder as Builder
 import Type.Proxy (Proxy(..))
+import Yoga.JSON (readJSON_, writeJSON)
 import YogaStories.Controls.Types (class EnumOptions, class GenericEnumOptions, Color(..), Enum(..), Select(..), Slider(..), color, enum, enumOptions, genericEnumOptions, select, slider)
 
 -- FFI
@@ -400,6 +413,195 @@ instance (GenericFromString a, GenericFromString b) => GenericFromString (Sum a 
     Nothing -> case genericFromString s of
       Just b -> Just (Inr b)
       Nothing -> Nothing
+
+-- ToParam / FromParam: convert values to/from strings for URL serialization
+
+class ToParam :: Type -> Type -> Constraint
+class ToParam schema value | schema -> value where
+  toParam :: schema -> value -> String
+
+instance ToParam String String where
+  toParam _ = identity
+
+instance ToParam Number Number where
+  toParam _ = show
+
+instance ToParam Int Int where
+  toParam _ = show
+
+instance ToParam Boolean Boolean where
+  toParam _ b = if b then "true" else "false"
+
+instance ToParam Slider Number where
+  toParam _ = show
+
+instance ToParam (Select String) String where
+  toParam _ = identity
+
+instance ToParam Color String where
+  toParam _ = identity
+
+instance (Generic a rep, GenericToString rep) => ToParam (Enum a) a where
+  toParam _ = genericToString <<< from
+
+instance ToParam (Maybe String) (Maybe String) where
+  toParam _ Nothing = ""
+  toParam _ (Just s) = s
+
+instance ToParam (Maybe Number) (Maybe Number) where
+  toParam _ Nothing = ""
+  toParam _ (Just n) = show n
+
+instance ToParam (Maybe Int) (Maybe Int) where
+  toParam _ Nothing = ""
+  toParam _ (Just n) = show n
+
+instance ToParam (Maybe Boolean) (Maybe Boolean) where
+  toParam _ Nothing = ""
+  toParam _ (Just b) = if b then "true" else "false"
+
+instance
+  ( RowToList schema rl
+  , InitialValues rl schema () values
+  , ToParams rl schema values
+  ) =>
+  ToParam (Record schema) (Record values) where
+  toParam schema values = writeJSON (toParams (Proxy :: Proxy rl) schema values)
+
+class FromParam :: Type -> Type -> Constraint
+class FromParam schema value | schema -> value where
+  fromParam :: schema -> String -> Maybe value
+
+instance FromParam String String where
+  fromParam _ = Just
+
+instance FromParam Number Number where
+  fromParam _ s = do
+    let n = parseFloat_ s
+    if n == n then Just n else Nothing
+
+instance FromParam Int Int where
+  fromParam _ s = do
+    let n = parseInt_ s
+    if n == n then Just n else Nothing
+
+instance FromParam Boolean Boolean where
+  fromParam _ "true" = Just true
+  fromParam _ "false" = Just false
+  fromParam _ _ = Nothing
+
+instance FromParam Slider Number where
+  fromParam _ s = do
+    let n = parseFloat_ s
+    if n == n then Just n else Nothing
+
+instance FromParam (Select String) String where
+  fromParam _ = Just
+
+instance FromParam Color String where
+  fromParam _ = Just
+
+instance (Generic a rep, GenericFromString rep) => FromParam (Enum a) a where
+  fromParam _ s = to <$> genericFromString s
+
+instance FromParam (Maybe String) (Maybe String) where
+  fromParam _ "" = Just Nothing
+  fromParam _ s = Just (Just s)
+
+instance FromParam (Maybe Number) (Maybe Number) where
+  fromParam _ "" = Just Nothing
+  fromParam _ s = do
+    let n = parseFloat_ s
+    if n == n then Just (Just n) else Nothing
+
+instance FromParam (Maybe Int) (Maybe Int) where
+  fromParam _ "" = Just Nothing
+  fromParam _ s = do
+    let n = parseInt_ s
+    if n == n then Just (Just n) else Nothing
+
+instance FromParam (Maybe Boolean) (Maybe Boolean) where
+  fromParam _ "" = Just Nothing
+  fromParam _ "true" = Just (Just true)
+  fromParam _ "false" = Just (Just false)
+  fromParam _ _ = Nothing
+
+instance
+  ( RowToList schema rl
+  , InitialValues rl schema () values
+  , FromParams rl schema values
+  ) =>
+  FromParam (Record schema) (Record values) where
+  fromParam schema s = do
+    obj <- readJSON_ s
+    let defaults = buildInitialValues schema
+    Just (fromParams (Proxy :: Proxy rl) schema obj defaults)
+
+-- ToParams / FromParams: walk a record via RowList
+
+class ToParams :: RowList Type -> Row Type -> Row Type -> Constraint
+class ToParams rl schemaRow valuesRow | rl -> schemaRow valuesRow where
+  toParams :: forall g. g rl -> Record schemaRow -> Record valuesRow -> Object String
+
+instance ToParams Nil schemaRow valuesRow where
+  toParams _ _ _ = Object.empty
+
+instance
+  ( IsSymbol name
+  , ToParam schemaType valueType
+  , ToParams tail schemaRow valuesRow
+  , Row.Cons name schemaType whatever1 schemaRow
+  , Row.Cons name valueType whatever2 valuesRow
+  ) =>
+  ToParams (Cons name schemaType tail) schemaRow valuesRow where
+  toParams _ schema values = Object.insert key val rest
+    where
+    nameP = Proxy :: Proxy name
+    key = reflectSymbol nameP
+    val = toParam (get nameP schema) (get nameP values)
+    rest = toParams (Proxy :: Proxy tail) schema values
+
+class FromParams :: RowList Type -> Row Type -> Row Type -> Constraint
+class FromParams rl schemaRow valuesRow | rl -> schemaRow valuesRow where
+  fromParams :: forall g. g rl -> Record schemaRow -> Object String -> Record valuesRow -> Record valuesRow
+
+instance FromParams Nil schemaRow valuesRow where
+  fromParams _ _ _ vals = vals
+
+instance
+  ( IsSymbol name
+  , FromParam schemaType valueType
+  , FromParams tail schemaRow valuesRow
+  , Row.Cons name schemaType whatever1 schemaRow
+  , Row.Cons name valueType whatever2 valuesRow
+  ) =>
+  FromParams (Cons name schemaType tail) schemaRow valuesRow where
+  fromParams _ schema params values = do
+    let rest = fromParams (Proxy :: Proxy tail) schema params values
+    let nameP = Proxy :: Proxy name
+    let key = reflectSymbol nameP
+    case Object.lookup key params >>= fromParam (get nameP schema) of
+      Just v -> set nameP v rest
+      Nothing -> rest
+
+valuesToParams
+  :: forall schema rl to
+   . RowToList schema rl
+  => ToParams rl schema to
+  => Record schema
+  -> Record to
+  -> Object String
+valuesToParams schema values = toParams (Proxy :: Proxy rl) schema values
+
+paramsToValues
+  :: forall schema rl to
+   . RowToList schema rl
+  => FromParams rl schema to
+  => Record schema
+  -> Object String
+  -> Record to
+  -> Record to
+paramsToValues schema params defaults = fromParams (Proxy :: Proxy rl) schema params defaults
 
 -- Layout helpers (all inline styles, no CSS classes)
 
