@@ -5,7 +5,7 @@ import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toMaybe)
 import Data.Tuple.Nested (type (/\), (/\))
 import Effect (Effect)
-import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, runEffectFn1, runEffectFn2, runEffectFn3)
+import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, ReactContext, Ref, createContext, provider)
 import React.Basic.Events (handler_)
@@ -41,10 +41,15 @@ scrollNext = runEffectFn1 scrollNextImpl
 foreign import canScrollPrevImpl :: EmblaApi -> Boolean
 foreign import canScrollNextImpl :: EmblaApi -> Boolean
 
-foreign import onImpl :: EffectFn3 String (EmblaApi -> Effect Unit) EmblaApi Unit
+foreign import onReInitImpl :: EffectFn2 (EmblaApi -> Effect Unit) EmblaApi Unit
 
-on :: String -> (EmblaApi -> Effect Unit) -> EmblaApi -> Effect Unit
-on = runEffectFn3 onImpl
+onReInit :: (EmblaApi -> Effect Unit) -> EmblaApi -> Effect Unit
+onReInit = runEffectFn2 onReInitImpl
+
+foreign import onSelectImpl :: EffectFn2 (EmblaApi -> Effect Unit) EmblaApi Unit
+
+onSelect :: (EmblaApi -> Effect Unit) -> EmblaApi -> Effect Unit
+onSelect = runEffectFn2 onSelectImpl
 
 type CarouselCtx =
   { ref :: Ref (Nullable Node)
@@ -74,16 +79,16 @@ carouselProviderComponent = component "CarouselProvider" \props -> React.do
   canPrev /\ setCanPrev <- React.useState' false
   canNext /\ setCanNext <- React.useState' false
   let
-    onSelect a = do
+    updateNav a = do
       setCanPrev (canScrollPrevImpl a)
       setCanNext (canScrollNextImpl a)
   React.useEffectAlways do
     case mbApi of
       Nothing -> pure (pure unit)
       Just api -> do
-        onSelect api
-        on "reInit" onSelect api
-        on "select" onSelect api
+        updateNav api
+        onReInit updateNav api
+        onSelect updateNav api
         pure (pure unit)
   let
     prev = case mbApi of

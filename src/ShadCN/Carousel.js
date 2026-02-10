@@ -9,5 +9,7 @@ export const scrollPrevImpl = (api) => api.scrollPrev();
 export const scrollNextImpl = (api) => api.scrollNext();
 export const canScrollPrevImpl = (api) => api.canScrollPrev();
 export const canScrollNextImpl = (api) => api.canScrollNext();
-export const onImpl = (event, handler, api) =>
-  api.on(event, (a) => handler(a)());
+export const onReInitImpl = (handler, api) =>
+  api.on("reInit", (a) => handler(a)());
+export const onSelectImpl = (handler, api) =>
+  api.on("select", (a) => handler(a)());
