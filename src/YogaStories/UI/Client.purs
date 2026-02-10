@@ -9,7 +9,6 @@ import Effect (Effect)
 import Effect.Aff (launchAff_)
 import Effect.Class (liftEffect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
-import YogaStories.UI.Hash (Selection, useHashRoute)
 import Foreign (Foreign)
 import Promise (Promise)
 import Promise.Aff (toAffE)
@@ -24,6 +23,7 @@ import Yoga.React (component)
 import Yoga.React.DOM.HTML (button, code, details, div, h1, h2, h3, nav, pre, summary)
 import Yoga.React.DOM.Internal (text)
 import YogaStories.Types (StoryModule)
+import YogaStories.UI.Hash (Selection, useHashRoute)
 import YogaStories.UI.Styles as S
 
 -- FFI
@@ -31,6 +31,8 @@ foreign import dynamicImportImpl :: String -> Effect (Promise Foreign)
 foreign import fetchStoryDataImpl :: Effect (Promise (Array StoryModule))
 foreign import unsafeGetPropertyImpl :: EffectFn2 String Foreign JSX
 foreign import getElementByIdImpl :: String -> Effect Element
+foreign import onModuleUpdateImpl :: (String -> Effect Unit) -> Effect Unit
+foreign import onStoriesUpdateImpl :: Effect Unit -> Effect Unit
 
 unsafeGetProperty :: String -> Foreign -> Effect JSX
 unsafeGetProperty = runEffectFn2 unsafeGetPropertyImpl
@@ -46,8 +48,17 @@ clientMain = launchAff_ do
 
 -- App
 app :: Array StoryModule -> JSX
-app = component "App" \stories -> React.do
+app = component "App" \initialStories -> React.do
   sel /\ onSelect <- useHashRoute
+  stories /\ setStories <- React.useState' initialStories
+
+  React.useEffectOnce do
+    onStoriesUpdateImpl do
+      launchAff_ do
+        fresh <- toAffE fetchStoryDataImpl
+        liftEffect $ setStories fresh
+    pure mempty
+
   pure $
     div { style: S.root }
       [ h1 { style: S.headerBar } "yoga-stories"
@@ -86,8 +97,14 @@ mainPanel = component "MainPanel" \props -> React.do
   loaded /\ setLoaded <- React.useState (Nothing :: Maybe { name :: String, mod :: Foreign })
   layoutRight /\ setLayoutRight <- React.useState' true
   stageDark /\ setStageDark <- React.useState' true
+  hmrVersion /\ setHmrVersion <- React.useState 0
 
-  React.useEffect props.selected.moduleName do
+  React.useEffectOnce do
+    onModuleUpdateImpl \_ ->
+      setHmrVersion (_ + 1)
+    pure mempty
+
+  React.useEffect { mod: props.selected.moduleName, ver: hmrVersion } do
     case props.selected.moduleName of
       Nothing -> pure mempty
       Just modName -> do

@@ -1,5 +1,5 @@
 export function dynamicImportImpl(path) {
-  return () => import(/* @vite-ignore */ path);
+  return () => import(/* @vite-ignore */ path + "?t=" + Date.now());
 }
 
 export function fetchStoryDataImpl() {
@@ -12,4 +12,16 @@ export function unsafeGetPropertyImpl(key, obj) {
 
 export function getElementByIdImpl(id) {
   return () => document.getElementById(id);
+}
+
+export function onModuleUpdateImpl(callback) {
+  return () => {
+    window.__yogaStoriesHMR = (moduleName) => callback(moduleName)();
+  };
+}
+
+export function onStoriesUpdateImpl(callback) {
+  return () => {
+    window.__yogaStoriesRefreshStories = () => callback();
+  };
 }

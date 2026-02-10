@@ -11,20 +11,28 @@ export function yogaStoriesPlugin(config) {
     configureServer(server) {
       const outputDir = resolve(process.cwd(), config.outputDir);
 
-      // Watch output/ for changes
       server.watcher.add(outputDir);
-      server.watcher.on("change", (path) => {
-        if (path.endsWith(".js") || path.endsWith("corefn.json")) {
-          cachedStories = null;
-          server.ws.send({ type: "full-reload" });
+
+      const onFileChange = (path) => {
+        if (!path.endsWith(".js") && !path.endsWith("corefn.json")) return;
+        const rel = path.replace(outputDir + "/", "");
+        const moduleName = rel.split("/")[0];
+        cachedStories = null;
+        server.ws.send({
+          type: "custom",
+          event: "yoga-stories:module-update",
+          data: { moduleName },
+        });
+        if (path.endsWith("corefn.json")) {
+          server.ws.send({
+            type: "custom",
+            event: "yoga-stories:stories-update",
+          });
         }
-      });
-      server.watcher.on("add", (path) => {
-        if (path.endsWith("index.js") || path.endsWith("corefn.json")) {
-          cachedStories = null;
-          server.ws.send({ type: "full-reload" });
-        }
-      });
+      };
+
+      server.watcher.on("change", onFileChange);
+      server.watcher.on("add", onFileChange);
 
       // Serve /stories.json via middleware
       server.middlewares.use(async (req, res, next) => {
