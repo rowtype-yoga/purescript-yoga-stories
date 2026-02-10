@@ -5,6 +5,7 @@ import Prelude
 import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toNullable)
 import Effect (Effect)
+import Control.Alt ((<|>))
 import Options.Applicative (Parser, ParserInfo, command, execParser, fullDesc, header, help, helper, hsubparser, info, int, long, metavar, option, progDesc, short, showDefault, strOption, switch, value, (<**>))
 
 data Command
@@ -50,10 +51,12 @@ cliParser = info (commandParser <**> helper)
   )
 
 commandParser :: Parser Command
-commandParser = hsubparser
-  ( command "serve" (info (Serve <$> serveParser) (progDesc "Start the dev server"))
-      <> command "build" (info (Build <$> buildParser) (progDesc "Production build with purs-backend-es"))
-  )
+commandParser =
+  hsubparser
+    ( command "serve" (info (Serve <$> serveParser) (progDesc "Start the dev server"))
+        <> command "build" (info (Build <$> buildParser) (progDesc "Production build"))
+    )
+    <|> Serve <$> serveParser
 
 serveParser :: Parser ServeOpts
 serveParser = ado
