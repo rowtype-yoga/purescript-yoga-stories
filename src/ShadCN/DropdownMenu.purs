@@ -9,20 +9,20 @@ foreign import dropdownMenuItemImpl :: forall r. Record r -> JSX
 foreign import dropdownMenuSeparatorImpl :: forall r. Record r -> JSX
 foreign import dropdownMenuLabelImpl :: forall r. Record r -> JSX
 
-dropdownMenu :: { children :: Array JSX } -> JSX
-dropdownMenu props = dropdownMenuImpl props
+dropdownMenu :: Array JSX -> JSX
+dropdownMenu kids = dropdownMenuImpl { children: kids }
 
-dropdownMenuTrigger :: { children :: Array JSX } -> JSX
-dropdownMenuTrigger props = dropdownMenuTriggerImpl props
+dropdownMenuTrigger :: Array JSX -> JSX
+dropdownMenuTrigger kids = dropdownMenuTriggerImpl { children: kids }
 
-dropdownMenuContent :: { children :: Array JSX } -> JSX
-dropdownMenuContent props = dropdownMenuContentImpl props
+dropdownMenuContent :: Array JSX -> JSX
+dropdownMenuContent kids = dropdownMenuContentImpl { children: kids }
 
-dropdownMenuItem :: { children :: Array JSX } -> JSX
-dropdownMenuItem props = dropdownMenuItemImpl props
+dropdownMenuItem :: Array JSX -> JSX
+dropdownMenuItem kids = dropdownMenuItemImpl { children: kids }
 
 dropdownMenuSeparator :: JSX
 dropdownMenuSeparator = dropdownMenuSeparatorImpl {}
 
-dropdownMenuLabel :: { children :: Array JSX } -> JSX
-dropdownMenuLabel props = dropdownMenuLabelImpl props
+dropdownMenuLabel :: Array JSX -> JSX
+dropdownMenuLabel kids = dropdownMenuLabelImpl { children: kids }

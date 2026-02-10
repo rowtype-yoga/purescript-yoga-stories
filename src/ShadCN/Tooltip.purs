@@ -7,14 +7,14 @@ foreign import tooltipImpl :: forall r. Record r -> JSX
 foreign import tooltipTriggerImpl :: forall r. Record r -> JSX
 foreign import tooltipContentImpl :: forall r. Record r -> JSX
 
-tooltipProvider :: { children :: Array JSX } -> JSX
-tooltipProvider props = tooltipProviderImpl props
+tooltipProvider :: Array JSX -> JSX
+tooltipProvider kids = tooltipProviderImpl { children: kids }
 
-tooltip :: { children :: Array JSX } -> JSX
-tooltip props = tooltipImpl props
+tooltip :: Array JSX -> JSX
+tooltip kids = tooltipImpl { children: kids }
 
-tooltipTrigger :: { children :: Array JSX } -> JSX
-tooltipTrigger props = tooltipTriggerImpl props
+tooltipTrigger :: Array JSX -> JSX
+tooltipTrigger kids = tooltipTriggerImpl { children: kids }
 
-tooltipContent :: { children :: Array JSX } -> JSX
-tooltipContent props = tooltipContentImpl props
+tooltipContent :: Array JSX -> JSX
+tooltipContent kids = tooltipContentImpl { children: kids }

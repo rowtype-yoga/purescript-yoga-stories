@@ -11,26 +11,26 @@ foreign import drawerTitleImpl :: forall r. Record r -> JSX
 foreign import drawerDescriptionImpl :: forall r. Record r -> JSX
 foreign import drawerCloseImpl :: forall r. Record r -> JSX
 
-drawer :: { children :: Array JSX } -> JSX
-drawer props = drawerImpl props
+drawer :: Array JSX -> JSX
+drawer kids = drawerImpl { children: kids }
 
-drawerTrigger :: { children :: Array JSX } -> JSX
-drawerTrigger props = drawerTriggerImpl props
+drawerTrigger :: Array JSX -> JSX
+drawerTrigger kids = drawerTriggerImpl { children: kids }
 
-drawerContent :: { children :: Array JSX } -> JSX
-drawerContent props = drawerContentImpl props
+drawerContent :: Array JSX -> JSX
+drawerContent kids = drawerContentImpl { children: kids }
 
-drawerHeader :: { children :: Array JSX } -> JSX
-drawerHeader props = drawerHeaderImpl props
+drawerHeader :: Array JSX -> JSX
+drawerHeader kids = drawerHeaderImpl { children: kids }
 
-drawerFooter :: { children :: Array JSX } -> JSX
-drawerFooter props = drawerFooterImpl props
+drawerFooter :: Array JSX -> JSX
+drawerFooter kids = drawerFooterImpl { children: kids }
 
-drawerTitle :: { children :: Array JSX } -> JSX
-drawerTitle props = drawerTitleImpl props
+drawerTitle :: Array JSX -> JSX
+drawerTitle kids = drawerTitleImpl { children: kids }
 
-drawerDescription :: { children :: Array JSX } -> JSX
-drawerDescription props = drawerDescriptionImpl props
+drawerDescription :: Array JSX -> JSX
+drawerDescription kids = drawerDescriptionImpl { children: kids }
 
-drawerClose :: { children :: Array JSX } -> JSX
-drawerClose props = drawerCloseImpl props
+drawerClose :: Array JSX -> JSX
+drawerClose kids = drawerCloseImpl { children: kids }

@@ -11,26 +11,26 @@ foreign import dialogTitleImpl :: forall r. Record r -> JSX
 foreign import dialogDescriptionImpl :: forall r. Record r -> JSX
 foreign import dialogCloseImpl :: forall r. Record r -> JSX
 
-dialog :: { children :: Array JSX } -> JSX
-dialog props = dialogImpl props
+dialog :: Array JSX -> JSX
+dialog kids = dialogImpl { children: kids }
 
-dialogTrigger :: { children :: Array JSX } -> JSX
-dialogTrigger props = dialogTriggerImpl props
+dialogTrigger :: Array JSX -> JSX
+dialogTrigger kids = dialogTriggerImpl { children: kids }
 
-dialogContent :: { children :: Array JSX } -> JSX
-dialogContent props = dialogContentImpl props
+dialogContent :: Array JSX -> JSX
+dialogContent kids = dialogContentImpl { children: kids }
 
-dialogHeader :: { children :: Array JSX } -> JSX
-dialogHeader props = dialogHeaderImpl props
+dialogHeader :: Array JSX -> JSX
+dialogHeader kids = dialogHeaderImpl { children: kids }
 
-dialogFooter :: { children :: Array JSX } -> JSX
-dialogFooter props = dialogFooterImpl props
+dialogFooter :: Array JSX -> JSX
+dialogFooter kids = dialogFooterImpl { children: kids }
 
-dialogTitle :: { children :: Array JSX } -> JSX
-dialogTitle props = dialogTitleImpl props
+dialogTitle :: Array JSX -> JSX
+dialogTitle kids = dialogTitleImpl { children: kids }
 
-dialogDescription :: { children :: Array JSX } -> JSX
-dialogDescription props = dialogDescriptionImpl props
+dialogDescription :: Array JSX -> JSX
+dialogDescription kids = dialogDescriptionImpl { children: kids }
 
-dialogClose :: { children :: Array JSX } -> JSX
-dialogClose props = dialogCloseImpl props
+dialogClose :: Array JSX -> JSX
+dialogClose kids = dialogCloseImpl { children: kids }

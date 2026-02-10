@@ -10,8 +10,8 @@ foreign import inputOTPSeparatorImpl :: forall r. Record r -> JSX
 inputOTP :: forall r. Record r -> JSX
 inputOTP props = inputOTPImpl props
 
-inputOTPGroup :: { children :: Array JSX } -> JSX
-inputOTPGroup props = inputOTPGroupImpl props
+inputOTPGroup :: Array JSX -> JSX
+inputOTPGroup kids = inputOTPGroupImpl { children: kids }
 
 inputOTPSlot :: { index :: Int } -> JSX
 inputOTPSlot props = inputOTPSlotImpl props

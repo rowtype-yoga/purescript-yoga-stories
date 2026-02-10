@@ -6,11 +6,11 @@ foreign import popoverImpl :: forall r. Record r -> JSX
 foreign import popoverTriggerImpl :: forall r. Record r -> JSX
 foreign import popoverContentImpl :: forall r. Record r -> JSX
 
-popover :: { children :: Array JSX } -> JSX
-popover props = popoverImpl props
+popover :: Array JSX -> JSX
+popover kids = popoverImpl { children: kids }
 
-popoverTrigger :: { children :: Array JSX } -> JSX
-popoverTrigger props = popoverTriggerImpl props
+popoverTrigger :: Array JSX -> JSX
+popoverTrigger kids = popoverTriggerImpl { children: kids }
 
-popoverContent :: { children :: Array JSX } -> JSX
-popoverContent props = popoverContentImpl props
+popoverContent :: Array JSX -> JSX
+popoverContent kids = popoverContentImpl { children: kids }

@@ -7,14 +7,14 @@ foreign import tabsListImpl :: forall r. Record r -> JSX
 foreign import tabsTriggerImpl :: forall r. Record r -> JSX
 foreign import tabsContentImpl :: forall r. Record r -> JSX
 
-tabs :: { defaultValue :: String, children :: Array JSX } -> JSX
-tabs props = tabsImpl props
+tabs :: String -> Array JSX -> JSX
+tabs defaultValue kids = tabsImpl { defaultValue, children: kids }
 
-tabsList :: { children :: Array JSX } -> JSX
-tabsList props = tabsListImpl props
+tabsList :: Array JSX -> JSX
+tabsList kids = tabsListImpl { children: kids }
 
-tabsTrigger :: { value :: String, children :: Array JSX } -> JSX
-tabsTrigger props = tabsTriggerImpl props
+tabsTrigger :: String -> Array JSX -> JSX
+tabsTrigger value kids = tabsTriggerImpl { value, children: kids }
 
-tabsContent :: { value :: String, children :: Array JSX } -> JSX
-tabsContent props = tabsContentImpl props
+tabsContent :: String -> Array JSX -> JSX
+tabsContent value kids = tabsContentImpl { value, children: kids }

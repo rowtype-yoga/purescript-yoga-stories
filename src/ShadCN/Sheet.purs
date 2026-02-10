@@ -11,26 +11,26 @@ foreign import sheetTitleImpl :: forall r. Record r -> JSX
 foreign import sheetDescriptionImpl :: forall r. Record r -> JSX
 foreign import sheetCloseImpl :: forall r. Record r -> JSX
 
-sheet :: { children :: Array JSX } -> JSX
-sheet props = sheetImpl props
+sheet :: Array JSX -> JSX
+sheet kids = sheetImpl { children: kids }
 
-sheetTrigger :: { children :: Array JSX } -> JSX
-sheetTrigger props = sheetTriggerImpl props
+sheetTrigger :: Array JSX -> JSX
+sheetTrigger kids = sheetTriggerImpl { children: kids }
 
-sheetContent :: { side :: String, children :: Array JSX } -> JSX
-sheetContent props = sheetContentImpl props
+sheetContent :: String -> Array JSX -> JSX
+sheetContent side kids = sheetContentImpl { side, children: kids }
 
-sheetHeader :: { children :: Array JSX } -> JSX
-sheetHeader props = sheetHeaderImpl props
+sheetHeader :: Array JSX -> JSX
+sheetHeader kids = sheetHeaderImpl { children: kids }
 
-sheetFooter :: { children :: Array JSX } -> JSX
-sheetFooter props = sheetFooterImpl props
+sheetFooter :: Array JSX -> JSX
+sheetFooter kids = sheetFooterImpl { children: kids }
 
-sheetTitle :: { children :: Array JSX } -> JSX
-sheetTitle props = sheetTitleImpl props
+sheetTitle :: Array JSX -> JSX
+sheetTitle kids = sheetTitleImpl { children: kids }
 
-sheetDescription :: { children :: Array JSX } -> JSX
-sheetDescription props = sheetDescriptionImpl props
+sheetDescription :: Array JSX -> JSX
+sheetDescription kids = sheetDescriptionImpl { children: kids }
 
-sheetClose :: { children :: Array JSX } -> JSX
-sheetClose props = sheetCloseImpl props
+sheetClose :: Array JSX -> JSX
+sheetClose kids = sheetCloseImpl { children: kids }

@@ -7,11 +7,11 @@ foreign import carouselItemImpl :: forall r. Record r -> JSX
 foreign import carouselPreviousImpl :: forall r. Record r -> JSX
 foreign import carouselNextImpl :: forall r. Record r -> JSX
 
-carousel :: { children :: Array JSX } -> JSX
-carousel props = carouselImpl props
+carousel :: Array JSX -> JSX
+carousel kids = carouselImpl { children: kids }
 
-carouselItem :: { children :: Array JSX } -> JSX
-carouselItem props = carouselItemImpl props
+carouselItem :: Array JSX -> JSX
+carouselItem kids = carouselItemImpl { children: kids }
 
 carouselPrevious :: {} -> JSX
 carouselPrevious props = carouselPreviousImpl props

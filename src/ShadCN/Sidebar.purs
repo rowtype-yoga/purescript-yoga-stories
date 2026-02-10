@@ -12,29 +12,29 @@ foreign import sidebarMenuImpl :: forall r. Record r -> JSX
 foreign import sidebarMenuItemImpl :: forall r. Record r -> JSX
 foreign import sidebarMenuButtonImpl :: forall r. Record r -> JSX
 
-sidebarProvider :: { children :: Array JSX } -> JSX
-sidebarProvider props = sidebarProviderImpl props
+sidebarProvider :: Array JSX -> JSX
+sidebarProvider kids = sidebarProviderImpl { children: kids }
 
-sidebar :: { children :: Array JSX } -> JSX
-sidebar props = sidebarImpl props
+sidebar :: Array JSX -> JSX
+sidebar kids = sidebarImpl { children: kids }
 
-sidebarHeader :: { children :: Array JSX } -> JSX
-sidebarHeader props = sidebarHeaderImpl props
+sidebarHeader :: Array JSX -> JSX
+sidebarHeader kids = sidebarHeaderImpl { children: kids }
 
-sidebarContent :: { children :: Array JSX } -> JSX
-sidebarContent props = sidebarContentImpl props
+sidebarContent :: Array JSX -> JSX
+sidebarContent kids = sidebarContentImpl { children: kids }
 
-sidebarFooter :: { children :: Array JSX } -> JSX
-sidebarFooter props = sidebarFooterImpl props
+sidebarFooter :: Array JSX -> JSX
+sidebarFooter kids = sidebarFooterImpl { children: kids }
 
 sidebarTrigger :: JSX
 sidebarTrigger = sidebarTriggerImpl {}
 
-sidebarMenu :: { children :: Array JSX } -> JSX
-sidebarMenu props = sidebarMenuImpl props
+sidebarMenu :: Array JSX -> JSX
+sidebarMenu kids = sidebarMenuImpl { children: kids }
 
-sidebarMenuItem :: { children :: Array JSX } -> JSX
-sidebarMenuItem props = sidebarMenuItemImpl props
+sidebarMenuItem :: Array JSX -> JSX
+sidebarMenuItem kids = sidebarMenuItemImpl { children: kids }
 
-sidebarMenuButton :: { children :: Array JSX } -> JSX
-sidebarMenuButton props = sidebarMenuButtonImpl props
+sidebarMenuButton :: Array JSX -> JSX
+sidebarMenuButton kids = sidebarMenuButtonImpl { children: kids }

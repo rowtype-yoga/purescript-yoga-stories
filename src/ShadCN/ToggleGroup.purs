@@ -5,8 +5,8 @@ import React.Basic (JSX)
 foreign import toggleGroupImpl :: forall r. Record r -> JSX
 foreign import toggleGroupItemImpl :: forall r. Record r -> JSX
 
-toggleGroup :: { type :: String, children :: Array JSX } -> JSX
-toggleGroup props = toggleGroupImpl props
+toggleGroup :: String -> Array JSX -> JSX
+toggleGroup type_ kids = toggleGroupImpl { type: type_, children: kids }
 
-toggleGroupItem :: { value :: String, children :: Array JSX } -> JSX
-toggleGroupItem props = toggleGroupItemImpl props
+toggleGroupItem :: String -> Array JSX -> JSX
+toggleGroupItem value kids = toggleGroupItemImpl { value, children: kids }

@@ -6,11 +6,11 @@ foreign import hoverCardImpl :: forall r. Record r -> JSX
 foreign import hoverCardTriggerImpl :: forall r. Record r -> JSX
 foreign import hoverCardContentImpl :: forall r. Record r -> JSX
 
-hoverCard :: { children :: Array JSX } -> JSX
-hoverCard props = hoverCardImpl props
+hoverCard :: Array JSX -> JSX
+hoverCard kids = hoverCardImpl { children: kids }
 
-hoverCardTrigger :: { children :: Array JSX } -> JSX
-hoverCardTrigger props = hoverCardTriggerImpl props
+hoverCardTrigger :: Array JSX -> JSX
+hoverCardTrigger kids = hoverCardTriggerImpl { children: kids }
 
-hoverCardContent :: { children :: Array JSX } -> JSX
-hoverCardContent props = hoverCardContentImpl props
+hoverCardContent :: Array JSX -> JSX
+hoverCardContent kids = hoverCardContentImpl { children: kids }

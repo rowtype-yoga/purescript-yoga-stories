@@ -11,26 +11,26 @@ foreign import selectGroupImpl :: forall r. Record r -> JSX
 foreign import selectLabelImpl :: forall r. Record r -> JSX
 foreign import selectSeparatorImpl :: forall r. Record r -> JSX
 
-select :: { children :: Array JSX } -> JSX
-select props = selectImpl props
+select :: Array JSX -> JSX
+select kids = selectImpl { children: kids }
 
-selectTrigger :: { children :: Array JSX } -> JSX
-selectTrigger props = selectTriggerImpl props
+selectTrigger :: Array JSX -> JSX
+selectTrigger kids = selectTriggerImpl { children: kids }
 
-selectContent :: { children :: Array JSX } -> JSX
-selectContent props = selectContentImpl props
+selectContent :: Array JSX -> JSX
+selectContent kids = selectContentImpl { children: kids }
 
-selectItem :: { value :: String, children :: Array JSX } -> JSX
-selectItem props = selectItemImpl props
+selectItem :: String -> Array JSX -> JSX
+selectItem value kids = selectItemImpl { value, children: kids }
 
 selectValue :: { placeholder :: String } -> JSX
 selectValue props = selectValueImpl props
 
-selectGroup :: { children :: Array JSX } -> JSX
-selectGroup props = selectGroupImpl props
+selectGroup :: Array JSX -> JSX
+selectGroup kids = selectGroupImpl { children: kids }
 
-selectLabel :: { children :: Array JSX } -> JSX
-selectLabel props = selectLabelImpl props
+selectLabel :: Array JSX -> JSX
+selectLabel kids = selectLabelImpl { children: kids }
 
 selectSeparator :: JSX
 selectSeparator = selectSeparatorImpl {}

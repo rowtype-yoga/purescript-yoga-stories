@@ -7,14 +7,14 @@ foreign import accordionItemImpl :: forall r. Record r -> JSX
 foreign import accordionTriggerImpl :: forall r. Record r -> JSX
 foreign import accordionContentImpl :: forall r. Record r -> JSX
 
-accordion :: { type :: String, collapsible :: Boolean, children :: Array JSX } -> JSX
-accordion props = accordionImpl props
+accordion :: { type :: String, collapsible :: Boolean } -> Array JSX -> JSX
+accordion props kids = accordionImpl { type: props.type, collapsible: props.collapsible, children: kids }
 
-accordionItem :: { value :: String, children :: Array JSX } -> JSX
-accordionItem props = accordionItemImpl props
+accordionItem :: { value :: String } -> Array JSX -> JSX
+accordionItem props kids = accordionItemImpl { value: props.value, children: kids }
 
-accordionTrigger :: { children :: Array JSX } -> JSX
-accordionTrigger props = accordionTriggerImpl props
+accordionTrigger :: Array JSX -> JSX
+accordionTrigger kids = accordionTriggerImpl { children: kids }
 
-accordionContent :: { children :: Array JSX } -> JSX
-accordionContent props = accordionContentImpl props
+accordionContent :: Array JSX -> JSX
+accordionContent kids = accordionContentImpl { children: kids }

@@ -6,11 +6,11 @@ foreign import collapsibleImpl :: forall r. Record r -> JSX
 foreign import collapsibleTriggerImpl :: forall r. Record r -> JSX
 foreign import collapsibleContentImpl :: forall r. Record r -> JSX
 
-collapsible :: { children :: Array JSX } -> JSX
-collapsible props = collapsibleImpl props
+collapsible :: Array JSX -> JSX
+collapsible kids = collapsibleImpl { children: kids }
 
-collapsibleTrigger :: { children :: Array JSX } -> JSX
-collapsibleTrigger props = collapsibleTriggerImpl props
+collapsibleTrigger :: Array JSX -> JSX
+collapsibleTrigger kids = collapsibleTriggerImpl { children: kids }
 
-collapsibleContent :: { children :: Array JSX } -> JSX
-collapsibleContent props = collapsibleContentImpl props
+collapsibleContent :: Array JSX -> JSX
+collapsibleContent kids = collapsibleContentImpl { children: kids }

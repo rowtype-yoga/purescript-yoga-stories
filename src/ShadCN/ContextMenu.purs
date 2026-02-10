@@ -9,20 +9,20 @@ foreign import contextMenuItemImpl :: forall r. Record r -> JSX
 foreign import contextMenuSeparatorImpl :: forall r. Record r -> JSX
 foreign import contextMenuLabelImpl :: forall r. Record r -> JSX
 
-contextMenu :: { children :: Array JSX } -> JSX
-contextMenu props = contextMenuImpl props
+contextMenu :: Array JSX -> JSX
+contextMenu kids = contextMenuImpl { children: kids }
 
-contextMenuTrigger :: { children :: Array JSX } -> JSX
-contextMenuTrigger props = contextMenuTriggerImpl props
+contextMenuTrigger :: Array JSX -> JSX
+contextMenuTrigger kids = contextMenuTriggerImpl { children: kids }
 
-contextMenuContent :: { children :: Array JSX } -> JSX
-contextMenuContent props = contextMenuContentImpl props
+contextMenuContent :: Array JSX -> JSX
+contextMenuContent kids = contextMenuContentImpl { children: kids }
 
-contextMenuItem :: { children :: Array JSX } -> JSX
-contextMenuItem props = contextMenuItemImpl props
+contextMenuItem :: Array JSX -> JSX
+contextMenuItem kids = contextMenuItemImpl { children: kids }
 
 contextMenuSeparator :: {} -> JSX
 contextMenuSeparator props = contextMenuSeparatorImpl props
 
-contextMenuLabel :: { children :: Array JSX } -> JSX
-contextMenuLabel props = contextMenuLabelImpl props
+contextMenuLabel :: Array JSX -> JSX
+contextMenuLabel kids = contextMenuLabelImpl { children: kids }

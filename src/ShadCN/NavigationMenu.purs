@@ -9,20 +9,20 @@ foreign import navigationMenuTriggerImpl :: forall r. Record r -> JSX
 foreign import navigationMenuContentImpl :: forall r. Record r -> JSX
 foreign import navigationMenuLinkImpl :: forall r. Record r -> JSX
 
-navigationMenu :: { children :: Array JSX } -> JSX
-navigationMenu props = navigationMenuImpl props
+navigationMenu :: Array JSX -> JSX
+navigationMenu kids = navigationMenuImpl { children: kids }
 
-navigationMenuList :: { children :: Array JSX } -> JSX
-navigationMenuList props = navigationMenuListImpl props
+navigationMenuList :: Array JSX -> JSX
+navigationMenuList kids = navigationMenuListImpl { children: kids }
 
-navigationMenuItem :: { children :: Array JSX } -> JSX
-navigationMenuItem props = navigationMenuItemImpl props
+navigationMenuItem :: Array JSX -> JSX
+navigationMenuItem kids = navigationMenuItemImpl { children: kids }
 
-navigationMenuTrigger :: { children :: Array JSX } -> JSX
-navigationMenuTrigger props = navigationMenuTriggerImpl props
+navigationMenuTrigger :: Array JSX -> JSX
+navigationMenuTrigger kids = navigationMenuTriggerImpl { children: kids }
 
-navigationMenuContent :: { children :: Array JSX } -> JSX
-navigationMenuContent props = navigationMenuContentImpl props
+navigationMenuContent :: Array JSX -> JSX
+navigationMenuContent kids = navigationMenuContentImpl { children: kids }
 
-navigationMenuLink :: { children :: Array JSX } -> JSX
-navigationMenuLink props = navigationMenuLinkImpl props
+navigationMenuLink :: Array JSX -> JSX
+navigationMenuLink kids = navigationMenuLinkImpl { children: kids }

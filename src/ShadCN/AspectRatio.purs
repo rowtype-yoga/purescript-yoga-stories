@@ -4,5 +4,5 @@ import React.Basic (JSX)
 
 foreign import aspectRatioImpl :: forall r. Record r -> JSX
 
-aspectRatio :: { ratio :: Number, children :: Array JSX } -> JSX
-aspectRatio props = aspectRatioImpl props
+aspectRatio :: Number -> Array JSX -> JSX
+aspectRatio ratio kids = aspectRatioImpl { ratio, children: kids }

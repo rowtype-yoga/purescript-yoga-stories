@@ -9,20 +9,20 @@ foreign import menubarContentImpl :: forall r. Record r -> JSX
 foreign import menubarItemImpl :: forall r. Record r -> JSX
 foreign import menubarSeparatorImpl :: forall r. Record r -> JSX
 
-menubar :: { children :: Array JSX } -> JSX
-menubar props = menubarImpl props
+menubar :: Array JSX -> JSX
+menubar kids = menubarImpl { children: kids }
 
-menubarMenu :: { children :: Array JSX } -> JSX
-menubarMenu props = menubarMenuImpl props
+menubarMenu :: Array JSX -> JSX
+menubarMenu kids = menubarMenuImpl { children: kids }
 
-menubarTrigger :: { children :: Array JSX } -> JSX
-menubarTrigger props = menubarTriggerImpl props
+menubarTrigger :: Array JSX -> JSX
+menubarTrigger kids = menubarTriggerImpl { children: kids }
 
-menubarContent :: { children :: Array JSX } -> JSX
-menubarContent props = menubarContentImpl props
+menubarContent :: Array JSX -> JSX
+menubarContent kids = menubarContentImpl { children: kids }
 
-menubarItem :: { children :: Array JSX } -> JSX
-menubarItem props = menubarItemImpl props
+menubarItem :: Array JSX -> JSX
+menubarItem kids = menubarItemImpl { children: kids }
 
 menubarSeparator :: {} -> JSX
 menubarSeparator props = menubarSeparatorImpl props
