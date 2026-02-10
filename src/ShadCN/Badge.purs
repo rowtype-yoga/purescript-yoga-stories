@@ -2,19 +2,20 @@ module ShadCN.Badge where
 
 import Prelude
 import React.Basic (JSX)
-import React.Basic.DOM as R
+import Yoga.React.DOM.HTML (span)
+import Yoga.React.DOM.Internal (class IsJSX)
 
 base :: String
 base = "inline-flex items-center justify-center rounded-full border border-transparent px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 gap-1 transition-[color,box-shadow] overflow-hidden"
 
-badgeDefault :: Array JSX -> JSX
-badgeDefault kids = R.span { className: base <> " bg-primary text-primary-foreground", children: kids }
+badgeDefault :: forall kids. IsJSX kids => kids -> JSX
+badgeDefault = span { className: base <> " bg-primary text-primary-foreground" }
 
-badgeSecondary :: Array JSX -> JSX
-badgeSecondary kids = R.span { className: base <> " bg-secondary text-secondary-foreground", children: kids }
+badgeSecondary :: forall kids. IsJSX kids => kids -> JSX
+badgeSecondary = span { className: base <> " bg-secondary text-secondary-foreground" }
 
-badgeDestructive :: Array JSX -> JSX
-badgeDestructive kids = R.span { className: base <> " bg-destructive text-white", children: kids }
+badgeDestructive :: forall kids. IsJSX kids => kids -> JSX
+badgeDestructive = span { className: base <> " bg-destructive text-white" }
 
-badgeOutline :: Array JSX -> JSX
-badgeOutline kids = R.span { className: base <> " border-border text-foreground", children: kids }
+badgeOutline :: forall kids. IsJSX kids => kids -> JSX
+badgeOutline = span { className: base <> " border-border text-foreground" }

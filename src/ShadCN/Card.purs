@@ -1,22 +1,23 @@
 module ShadCN.Card where
 
 import React.Basic (JSX)
-import React.Basic.DOM as R
+import Yoga.React.DOM.HTML (div)
+import Yoga.React.DOM.Internal (class IsJSX)
 
-card :: Array JSX -> JSX
-card kids = R.div { className: "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm", children: kids }
+card :: forall kids. IsJSX kids => kids -> JSX
+card = div { className: "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm" }
 
-cardHeader :: Array JSX -> JSX
-cardHeader kids = R.div { className: "grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6", children: kids }
+cardHeader :: forall kids. IsJSX kids => kids -> JSX
+cardHeader = div { className: "grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6" }
 
-cardTitle :: Array JSX -> JSX
-cardTitle kids = R.div { className: "leading-none font-semibold", children: kids }
+cardTitle :: forall kids. IsJSX kids => kids -> JSX
+cardTitle = div { className: "leading-none font-semibold" }
 
-cardDescription :: Array JSX -> JSX
-cardDescription kids = R.div { className: "text-muted-foreground text-sm", children: kids }
+cardDescription :: forall kids. IsJSX kids => kids -> JSX
+cardDescription = div { className: "text-muted-foreground text-sm" }
 
-cardContent :: Array JSX -> JSX
-cardContent kids = R.div { className: "px-6", children: kids }
+cardContent :: forall kids. IsJSX kids => kids -> JSX
+cardContent = div { className: "px-6" }
 
-cardFooter :: Array JSX -> JSX
-cardFooter kids = R.div { className: "flex items-center px-6", children: kids }
+cardFooter :: forall kids. IsJSX kids => kids -> JSX
+cardFooter = div { className: "flex items-center px-6" }

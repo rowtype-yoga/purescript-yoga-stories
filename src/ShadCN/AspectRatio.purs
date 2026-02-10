@@ -1,7 +1,10 @@
 module ShadCN.AspectRatio where
 
-import React.Basic (JSX, element)
+import Prelude
+import Data.Int (toNumber)
+import React.Basic (JSX)
+import Yoga.React.DOM.Internal (class IsJSX, createElement)
 import ShadCN.Radix as Radix
 
-aspectRatio :: Number -> Array JSX -> JSX
-aspectRatio ratio kids = element Radix.aspectRatioRoot { ratio, children: kids }
+by :: forall kids. IsJSX kids => Int -> Int -> kids -> JSX
+by w h = createElement Radix.aspectRatioRoot { ratio: toNumber w / toNumber h }

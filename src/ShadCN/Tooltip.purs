@@ -1,17 +1,18 @@
 module ShadCN.Tooltip where
 
-import React.Basic (JSX, element)
+import React.Basic (JSX)
+import Yoga.React.DOM.Internal (class IsJSX, createElement)
 import ShadCN.Radix as Radix
 
-tooltipProvider :: Array JSX -> JSX
-tooltipProvider kids = element Radix.tooltipProvider { delayDuration: 0, children: kids }
+tooltipProvider :: forall kids. IsJSX kids => kids -> JSX
+tooltipProvider = createElement Radix.tooltipProvider { delayDuration: 0 }
 
-tooltip :: Array JSX -> JSX
-tooltip kids = element Radix.tooltipRoot { children: kids }
+tooltip :: forall kids. IsJSX kids => kids -> JSX
+tooltip = createElement Radix.tooltipRoot {}
 
-tooltipTrigger :: Array JSX -> JSX
-tooltipTrigger kids = element Radix.tooltipTrigger { children: kids }
+tooltipTrigger :: forall kids. IsJSX kids => kids -> JSX
+tooltipTrigger = createElement Radix.tooltipTrigger {}
 
-tooltipContent :: Array JSX -> JSX
-tooltipContent kids = element Radix.tooltipPortal { children:
-  [ element Radix.tooltipContent { className: "bg-foreground text-background animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance", sideOffset: 0, children: kids } ] }
+tooltipContent :: forall kids. IsJSX kids => kids -> JSX
+tooltipContent kids = createElement Radix.tooltipPortal {}
+  [ createElement Radix.tooltipContent { className: "bg-foreground text-background animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance", sideOffset: 0 } kids ]

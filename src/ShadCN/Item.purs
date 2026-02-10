@@ -1,25 +1,26 @@
 module ShadCN.Item where
 
 import React.Basic (JSX)
-import React.Basic.DOM as R
+import Yoga.React.DOM.HTML (div, p)
+import Yoga.React.DOM.Internal (class IsJSX)
 
-item :: Array JSX -> JSX
-item kids = R.div { className: "group/item flex items-center border border-transparent text-sm rounded-md transition-colors flex-wrap p-4 gap-4", children: kids }
+item :: forall kids. IsJSX kids => kids -> JSX
+item = div { className: "group/item flex items-center border border-transparent text-sm rounded-md transition-colors flex-wrap p-4 gap-4" }
 
-itemGroup :: Array JSX -> JSX
-itemGroup kids = R.div { className: "flex flex-col", role: "list", children: kids }
+itemGroup :: forall kids. IsJSX kids => kids -> JSX
+itemGroup = div { className: "flex flex-col", role: "list" }
 
-itemMedia :: Array JSX -> JSX
-itemMedia kids = R.div { className: "flex shrink-0 items-center justify-center gap-2", children: kids }
+itemMedia :: forall kids. IsJSX kids => kids -> JSX
+itemMedia = div { className: "flex shrink-0 items-center justify-center gap-2" }
 
-itemContent :: Array JSX -> JSX
-itemContent kids = R.div { className: "flex flex-1 flex-col gap-1", children: kids }
+itemContent :: forall kids. IsJSX kids => kids -> JSX
+itemContent = div { className: "flex flex-1 flex-col gap-1" }
 
-itemTitle :: Array JSX -> JSX
-itemTitle kids = R.div { className: "flex w-fit items-center gap-2 text-sm leading-snug font-medium", children: kids }
+itemTitle :: forall kids. IsJSX kids => kids -> JSX
+itemTitle = div { className: "flex w-fit items-center gap-2 text-sm leading-snug font-medium" }
 
-itemDescription :: Array JSX -> JSX
-itemDescription kids = R.p { className: "text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance", children: kids }
+itemDescription :: forall kids. IsJSX kids => kids -> JSX
+itemDescription = p { className: "text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance" }
 
-itemActions :: Array JSX -> JSX
-itemActions kids = R.div { className: "flex items-center gap-2", children: kids }
+itemActions :: forall kids. IsJSX kids => kids -> JSX
+itemActions = div { className: "flex items-center gap-2" }

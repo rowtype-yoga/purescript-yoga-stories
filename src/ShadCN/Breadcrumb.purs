@@ -1,22 +1,23 @@
 module ShadCN.Breadcrumb where
 
 import React.Basic (JSX)
-import React.Basic.DOM as R
+import Yoga.React.DOM.HTML (nav, ol, li, a, span)
+import Yoga.React.DOM.Internal (class IsJSX, text)
 
-breadcrumb :: Array JSX -> JSX
-breadcrumb kids = R.nav { children: kids }
+breadcrumb :: forall kids. IsJSX kids => kids -> JSX
+breadcrumb = nav {}
 
-breadcrumbList :: Array JSX -> JSX
-breadcrumbList kids = R.ol { className: "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5", children: kids }
+breadcrumbList :: forall kids. IsJSX kids => kids -> JSX
+breadcrumbList = ol { className: "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5" }
 
-breadcrumbItem :: Array JSX -> JSX
-breadcrumbItem kids = R.li { className: "inline-flex items-center gap-1.5", children: kids }
+breadcrumbItem :: forall kids. IsJSX kids => kids -> JSX
+breadcrumbItem = li { className: "inline-flex items-center gap-1.5" }
 
-breadcrumbLink :: String -> Array JSX -> JSX
-breadcrumbLink href kids = R.a { href, className: "hover:text-foreground transition-colors", children: kids }
+breadcrumbLink :: forall kids. IsJSX kids => String -> kids -> JSX
+breadcrumbLink href = a { href, className: "hover:text-foreground transition-colors" }
 
-breadcrumbPage :: Array JSX -> JSX
-breadcrumbPage kids = R.span { className: "text-foreground font-normal", children: kids }
+breadcrumbPage :: forall kids. IsJSX kids => kids -> JSX
+breadcrumbPage = span { className: "text-foreground font-normal" }
 
 breadcrumbSeparator :: JSX
-breadcrumbSeparator = R.li { className: "[&>svg]:size-3.5", role: "presentation", children: [ R.text "/" ] }
+breadcrumbSeparator = li { className: "[&>svg]:size-3.5", role: "presentation" } (text "/")

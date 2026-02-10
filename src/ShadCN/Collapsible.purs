@@ -1,13 +1,14 @@
 module ShadCN.Collapsible where
 
-import React.Basic (JSX, element)
+import React.Basic (JSX)
+import Yoga.React.DOM.Internal (class IsJSX, createElement)
 import ShadCN.Radix as Radix
 
-collapsible :: Array JSX -> JSX
-collapsible kids = element Radix.collapsibleRoot { children: kids }
+collapsible :: forall kids. IsJSX kids => kids -> JSX
+collapsible = createElement Radix.collapsibleRoot {}
 
-collapsibleTrigger :: Array JSX -> JSX
-collapsibleTrigger kids = element Radix.collapsibleTrigger { children: kids }
+collapsibleTrigger :: forall kids. IsJSX kids => kids -> JSX
+collapsibleTrigger = createElement Radix.collapsibleTrigger {}
 
-collapsibleContent :: Array JSX -> JSX
-collapsibleContent kids = element Radix.collapsibleContent { children: kids }
+collapsibleContent :: forall kids. IsJSX kids => kids -> JSX
+collapsibleContent = createElement Radix.collapsibleContent {}

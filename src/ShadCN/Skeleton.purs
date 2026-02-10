@@ -1,7 +1,7 @@
 module ShadCN.Skeleton where
 
 import React.Basic (JSX)
-import React.Basic.DOM as R
+import Yoga.React.DOM.HTML.Div (div_)
 
 skeleton :: JSX
-skeleton = R.div { className: "bg-accent animate-pulse rounded-md" }
+skeleton = div_ { className: "bg-accent animate-pulse rounded-md" }
