@@ -1,36 +1,28 @@
 module ShadCN.Table where
 
 import React.Basic (JSX)
+import React.Basic.DOM as R
 
-foreign import tableImpl :: forall r. Record r -> JSX
-foreign import tableHeaderImpl :: forall r. Record r -> JSX
-foreign import tableBodyImpl :: forall r. Record r -> JSX
-foreign import tableFooterImpl :: forall r. Record r -> JSX
-foreign import tableRowImpl :: forall r. Record r -> JSX
-foreign import tableHeadImpl :: forall r. Record r -> JSX
-foreign import tableCellImpl :: forall r. Record r -> JSX
-foreign import tableCaptionImpl :: forall r. Record r -> JSX
+table :: Array JSX -> JSX
+table kids = R.div { className: "relative w-full overflow-x-auto", children: [ R.table { className: "w-full caption-bottom text-sm", children: kids } ] }
 
-table :: { children :: Array JSX } -> JSX
-table props = tableImpl { children: props.children }
+tableHeader :: Array JSX -> JSX
+tableHeader kids = R.thead { className: "[&_tr]:border-b", children: kids }
 
-tableHeader :: { children :: Array JSX } -> JSX
-tableHeader props = tableHeaderImpl { children: props.children }
+tableBody :: Array JSX -> JSX
+tableBody kids = R.tbody { className: "[&_tr:last-child]:border-0", children: kids }
 
-tableBody :: { children :: Array JSX } -> JSX
-tableBody props = tableBodyImpl { children: props.children }
+tableFooter :: Array JSX -> JSX
+tableFooter kids = R.tfoot { className: "bg-muted/50 border-t font-medium [&>tr]:last:border-b-0", children: kids }
 
-tableFooter :: { children :: Array JSX } -> JSX
-tableFooter props = tableFooterImpl { children: props.children }
+tableRow :: Array JSX -> JSX
+tableRow kids = R.tr { className: "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors", children: kids }
 
-tableRow :: { children :: Array JSX } -> JSX
-tableRow props = tableRowImpl { children: props.children }
+tableHead :: Array JSX -> JSX
+tableHead kids = R.th { className: "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap", children: kids }
 
-tableHead :: { children :: Array JSX } -> JSX
-tableHead props = tableHeadImpl { children: props.children }
+tableCell :: Array JSX -> JSX
+tableCell kids = R.td { className: "p-2 align-middle whitespace-nowrap", children: kids }
 
-tableCell :: { children :: Array JSX } -> JSX
-tableCell props = tableCellImpl { children: props.children }
-
-tableCaption :: { children :: Array JSX } -> JSX
-tableCaption props = tableCaptionImpl { children: props.children }
+tableCaption :: Array JSX -> JSX
+tableCaption kids = R.caption { className: "text-muted-foreground mt-4 text-sm", children: kids }

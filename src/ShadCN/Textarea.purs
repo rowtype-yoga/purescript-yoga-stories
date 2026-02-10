@@ -1,9 +1,4 @@
 module ShadCN.Textarea where
 
-import React.Basic (JSX)
-
-foreign import textareaImpl :: forall r. Record r -> JSX
-
-textarea :: { placeholder :: String, disabled :: Boolean } -> JSX
-textarea props =
-  textareaImpl { placeholder: props.placeholder, disabled: props.disabled }
+textareaCls :: String
+textareaCls = "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"

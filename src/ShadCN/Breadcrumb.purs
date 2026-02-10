@@ -1,28 +1,22 @@
 module ShadCN.Breadcrumb where
 
 import React.Basic (JSX)
+import React.Basic.DOM as R
 
-foreign import breadcrumbImpl :: forall r. Record r -> JSX
-foreign import breadcrumbListImpl :: forall r. Record r -> JSX
-foreign import breadcrumbItemImpl :: forall r. Record r -> JSX
-foreign import breadcrumbLinkImpl :: forall r. Record r -> JSX
-foreign import breadcrumbPageImpl :: forall r. Record r -> JSX
-foreign import breadcrumbSeparatorImpl :: forall r. Record r -> JSX
+breadcrumb :: Array JSX -> JSX
+breadcrumb kids = R.nav { children: kids }
 
-breadcrumb :: { children :: Array JSX } -> JSX
-breadcrumb props = breadcrumbImpl props
+breadcrumbList :: Array JSX -> JSX
+breadcrumbList kids = R.ol { className: "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5", children: kids }
 
-breadcrumbList :: { children :: Array JSX } -> JSX
-breadcrumbList props = breadcrumbListImpl props
+breadcrumbItem :: Array JSX -> JSX
+breadcrumbItem kids = R.li { className: "inline-flex items-center gap-1.5", children: kids }
 
-breadcrumbItem :: { children :: Array JSX } -> JSX
-breadcrumbItem props = breadcrumbItemImpl props
+breadcrumbLink :: String -> Array JSX -> JSX
+breadcrumbLink href kids = R.a { href, className: "hover:text-foreground transition-colors", children: kids }
 
-breadcrumbLink :: { href :: String, children :: Array JSX } -> JSX
-breadcrumbLink props = breadcrumbLinkImpl props
-
-breadcrumbPage :: { children :: Array JSX } -> JSX
-breadcrumbPage props = breadcrumbPageImpl props
+breadcrumbPage :: Array JSX -> JSX
+breadcrumbPage kids = R.span { className: "text-foreground font-normal", children: kids }
 
 breadcrumbSeparator :: JSX
-breadcrumbSeparator = breadcrumbSeparatorImpl {}
+breadcrumbSeparator = R.li { className: "[&>svg]:size-3.5", role: "presentation", children: [ R.text "/" ] }

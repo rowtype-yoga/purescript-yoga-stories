@@ -1,8 +1,7 @@
 module ShadCN.Chart where
 
 import React.Basic (JSX)
+import React.Basic.DOM as R
 
-foreign import chartContainerImpl :: forall r. Record r -> JSX
-
-chartContainer :: { children :: Array JSX } -> JSX
-chartContainer props = chartContainerImpl props
+chartContainer :: Array JSX -> JSX
+chartContainer kids = R.div { className: "flex aspect-video justify-center text-xs", children: kids }

@@ -1,9 +1,7 @@
 module ShadCN.Skeleton where
 
 import React.Basic (JSX)
+import React.Basic.DOM as R
 
-foreign import skeletonImpl :: forall r. Record r -> JSX
-
-skeleton :: { style :: { width :: String, height :: String } } -> JSX
-skeleton props =
-  skeletonImpl { style: props.style }
+skeleton :: JSX
+skeleton = R.div { className: "bg-accent animate-pulse rounded-md" }

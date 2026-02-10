@@ -1,28 +1,22 @@
 module ShadCN.Card where
 
 import React.Basic (JSX)
+import React.Basic.DOM as R
 
-foreign import cardImpl :: forall r. Record r -> JSX
-foreign import cardHeaderImpl :: forall r. Record r -> JSX
-foreign import cardTitleImpl :: forall r. Record r -> JSX
-foreign import cardDescriptionImpl :: forall r. Record r -> JSX
-foreign import cardContentImpl :: forall r. Record r -> JSX
-foreign import cardFooterImpl :: forall r. Record r -> JSX
+card :: Array JSX -> JSX
+card kids = R.div { className: "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm", children: kids }
 
-card :: { children :: Array JSX } -> JSX
-card props = cardImpl { children: props.children }
+cardHeader :: Array JSX -> JSX
+cardHeader kids = R.div { className: "grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6", children: kids }
 
-cardHeader :: { children :: Array JSX } -> JSX
-cardHeader props = cardHeaderImpl { children: props.children }
+cardTitle :: Array JSX -> JSX
+cardTitle kids = R.div { className: "leading-none font-semibold", children: kids }
 
-cardTitle :: { children :: Array JSX } -> JSX
-cardTitle props = cardTitleImpl { children: props.children }
+cardDescription :: Array JSX -> JSX
+cardDescription kids = R.div { className: "text-muted-foreground text-sm", children: kids }
 
-cardDescription :: { children :: Array JSX } -> JSX
-cardDescription props = cardDescriptionImpl { children: props.children }
+cardContent :: Array JSX -> JSX
+cardContent kids = R.div { className: "px-6", children: kids }
 
-cardContent :: { children :: Array JSX } -> JSX
-cardContent props = cardContentImpl { children: props.children }
-
-cardFooter :: { children :: Array JSX } -> JSX
-cardFooter props = cardFooterImpl { children: props.children }
+cardFooter :: Array JSX -> JSX
+cardFooter kids = R.div { className: "flex items-center px-6", children: kids }

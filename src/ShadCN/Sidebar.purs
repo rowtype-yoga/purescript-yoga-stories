@@ -27,8 +27,8 @@ sidebarContent props = sidebarContentImpl props
 sidebarFooter :: { children :: Array JSX } -> JSX
 sidebarFooter props = sidebarFooterImpl props
 
-sidebarTrigger :: {} -> JSX
-sidebarTrigger props = sidebarTriggerImpl props
+sidebarTrigger :: JSX
+sidebarTrigger = sidebarTriggerImpl {}
 
 sidebarMenu :: { children :: Array JSX } -> JSX
 sidebarMenu props = sidebarMenuImpl props

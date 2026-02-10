@@ -1,32 +1,19 @@
 module ShadCN.Pagination where
 
 import React.Basic (JSX)
+import React.Basic.DOM as R
 
-foreign import paginationImpl :: forall r. Record r -> JSX
-foreign import paginationContentImpl :: forall r. Record r -> JSX
-foreign import paginationItemImpl :: forall r. Record r -> JSX
-foreign import paginationLinkImpl :: forall r. Record r -> JSX
-foreign import paginationPreviousImpl :: forall r. Record r -> JSX
-foreign import paginationNextImpl :: forall r. Record r -> JSX
-foreign import paginationEllipsisImpl :: forall r. Record r -> JSX
+pagination :: Array JSX -> JSX
+pagination kids = R.nav { className: "mx-auto flex w-full justify-center", role: "navigation", children: kids }
 
-pagination :: { children :: Array JSX } -> JSX
-pagination props = paginationImpl props
+paginationContent :: Array JSX -> JSX
+paginationContent kids = R.ul { className: "flex flex-row items-center gap-1", children: kids }
 
-paginationContent :: { children :: Array JSX } -> JSX
-paginationContent props = paginationContentImpl props
+paginationItem :: Array JSX -> JSX
+paginationItem kids = R.li { children: kids }
 
-paginationItem :: { children :: Array JSX } -> JSX
-paginationItem props = paginationItemImpl props
-
-paginationLink :: { isActive :: Boolean, href :: String, children :: Array JSX } -> JSX
-paginationLink props = paginationLinkImpl props
-
-paginationPrevious :: { href :: String } -> JSX
-paginationPrevious props = paginationPreviousImpl props
-
-paginationNext :: { href :: String } -> JSX
-paginationNext props = paginationNextImpl props
+paginationLink :: String -> Array JSX -> JSX
+paginationLink href kids = R.a { href, className: "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-9 px-4 py-2 hover:bg-accent hover:text-accent-foreground", children: kids }
 
 paginationEllipsis :: JSX
-paginationEllipsis = paginationEllipsisImpl {}
+paginationEllipsis = R.span { className: "flex size-9 items-center justify-center", children: [ R.text "..." ] }

@@ -1,32 +1,25 @@
 module ShadCN.Item where
 
 import React.Basic (JSX)
+import React.Basic.DOM as R
 
-foreign import itemImpl :: forall r. Record r -> JSX
-foreign import itemGroupImpl :: forall r. Record r -> JSX
-foreign import itemMediaImpl :: forall r. Record r -> JSX
-foreign import itemContentImpl :: forall r. Record r -> JSX
-foreign import itemTitleImpl :: forall r. Record r -> JSX
-foreign import itemDescriptionImpl :: forall r. Record r -> JSX
-foreign import itemActionsImpl :: forall r. Record r -> JSX
+item :: Array JSX -> JSX
+item kids = R.div { className: "group/item flex items-center border border-transparent text-sm rounded-md transition-colors flex-wrap p-4 gap-4", children: kids }
 
-item :: { children :: Array JSX } -> JSX
-item props = itemImpl props
+itemGroup :: Array JSX -> JSX
+itemGroup kids = R.div { className: "flex flex-col", role: "list", children: kids }
 
-itemGroup :: { children :: Array JSX } -> JSX
-itemGroup props = itemGroupImpl props
+itemMedia :: Array JSX -> JSX
+itemMedia kids = R.div { className: "flex shrink-0 items-center justify-center gap-2", children: kids }
 
-itemMedia :: { children :: Array JSX } -> JSX
-itemMedia props = itemMediaImpl props
+itemContent :: Array JSX -> JSX
+itemContent kids = R.div { className: "flex flex-1 flex-col gap-1", children: kids }
 
-itemContent :: { children :: Array JSX } -> JSX
-itemContent props = itemContentImpl props
+itemTitle :: Array JSX -> JSX
+itemTitle kids = R.div { className: "flex w-fit items-center gap-2 text-sm leading-snug font-medium", children: kids }
 
-itemTitle :: { children :: Array JSX } -> JSX
-itemTitle props = itemTitleImpl props
+itemDescription :: Array JSX -> JSX
+itemDescription kids = R.p { className: "text-muted-foreground line-clamp-2 text-sm leading-normal font-normal text-balance", children: kids }
 
-itemDescription :: { children :: Array JSX } -> JSX
-itemDescription props = itemDescriptionImpl props
-
-itemActions :: { children :: Array JSX } -> JSX
-itemActions props = itemActionsImpl props
+itemActions :: Array JSX -> JSX
+itemActions kids = R.div { className: "flex items-center gap-2", children: kids }
