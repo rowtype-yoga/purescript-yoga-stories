@@ -1,7 +1,11 @@
-import { clientMain } from "/output/YogaStories.UI.Client/index.js";
-clientMain();
+if (!window.__yogaStoriesInitialised) {
+  window.__yogaStoriesInitialised = true;
+  const { clientMain } = await import("/output/YogaStories.UI.Client/index.js");
+  clientMain();
+}
 
 if (import.meta.hot) {
+  import.meta.hot.accept();
   import.meta.hot.on("yoga-stories:module-update", ({ moduleName }) => {
     window.__yogaStoriesHMR?.(moduleName);
   });

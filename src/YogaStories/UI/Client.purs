@@ -108,7 +108,6 @@ mainPanel = component "MainPanel" \props -> React.do
     case props.selected.moduleName of
       Nothing -> pure mempty
       Just modName -> do
-        setLoaded \_ -> Nothing
         launchAff_ do
           mod <- toAffE (dynamicImportImpl ("/output/" <> modName <> "/index.js"))
           liftEffect $ setLoaded \_ -> Just { name: modName, mod }
