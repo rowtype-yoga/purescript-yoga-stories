@@ -25,25 +25,35 @@ center = css { display: "flex", alignItems: "center", justifyContent: "center" }
 flex1 :: CSS
 flex1 = css { flex: "1" }
 
--- Header
-headerBar :: CSS
-headerBar = css
-  { padding: "16px 24px"
-  , margin: "0"
-  , borderBottom: "1px solid #334155"
-  , fontSize: "18px"
-  , fontWeight: "600"
-  , color: "#818cf8"
-  }
-
 -- Sidebar
 sidebarNav :: CSS
 sidebarNav = css
   { width: "256px"
   , borderRight: "1px solid #334155"
+  , display: "flex"
+  , flexDirection: "column"
+  , flexShrink: "0"
+  }
+
+searchBox :: CSS
+searchBox = css
+  { padding: "8px 12px"
+  , borderBottom: "1px solid #334155"
+  }
+
+sidebarContent :: CSS
+sidebarContent = css
+  { flex: "1"
   , overflowY: "auto"
   , padding: "12px 0"
-  , flexShrink: "0"
+  }
+
+sidebarBranding :: CSS
+sidebarBranding = css
+  { padding: "8px 16px"
+  , fontSize: "11px"
+  , color: "#475569"
+  , borderTop: "1px solid #334155"
   }
 
 sidebarHeading :: CSS

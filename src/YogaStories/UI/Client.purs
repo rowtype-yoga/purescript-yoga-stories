@@ -2,6 +2,7 @@ module YogaStories.UI.Client where
 
 import Prelude hiding (div)
 
+import Data.Array as Array
 import Data.Array (find)
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
@@ -12,15 +13,17 @@ import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign (Foreign)
 import Promise (Promise)
 import Promise.Aff (toAffE)
+import Data.String as String
 import React.Basic (JSX)
 import React.Basic.DOM as R
 import React.Basic.DOM.Client (createRoot, renderRoot)
-import React.Basic.Events (handler_)
+import React.Basic.DOM.Events (targetValue)
+import React.Basic.Events (handler, handler_)
 import React.Basic.Hooks as React
 import React.Basic.Hooks.Internal (unsafeRenderEffect)
 import Web.DOM (Element)
 import Yoga.React (component)
-import Yoga.React.DOM.HTML (button, code, details, div, h1, h2, h3, nav, pre, summary)
+import Yoga.React.DOM.HTML (button, code, details, div, h3, nav, pre, summary)
 import Yoga.React.DOM.Internal (text)
 import YogaStories.Types (StoryModule)
 import YogaStories.UI.Hash (Selection, useHashRoute)
@@ -61,8 +64,7 @@ app = component "App" \initialStories -> React.do
 
   pure $
     div { style: S.root }
-      [ h1 { style: S.headerBar } "yoga-stories"
-      , div { style: S.row }
+      [ div { style: S.row }
           [ sidebar { stories, selected: sel, onSelect }
           , mainPanel { selected: sel, stories }
           ]
@@ -71,10 +73,39 @@ app = component "App" \initialStories -> React.do
 -- Sidebar
 sidebar :: { stories :: Array StoryModule, selected :: Selection, onSelect :: String -> String -> Effect Unit } -> JSX
 sidebar = component "Sidebar" \props -> React.do
+  query /\ setQuery <- React.useState' ""
+  let needle = String.toLower query
+  let
+    filtered = props.stories # Array.filter \s ->
+      String.contains (String.Pattern needle) (String.toLower s.moduleName)
+        || Array.any (String.contains (String.Pattern needle) <<< String.toLower) s.exports
   pure $
     nav { style: S.sidebarNav }
-      [ h2 { style: S.sidebarHeading } "Stories"
-      , div {} (map (moduleGroup props) props.stories)
+      [ div { style: S.searchBox }
+          [ R.input
+              { type: "text"
+              , placeholder: "Search..."
+              , value: query
+              , onChange: handler targetValue \v -> case v of
+                  Just q -> setQuery q
+                  _ -> pure unit
+              , style: R.css
+                  { width: "100%"
+                  , padding: "6px 10px"
+                  , fontSize: "13px"
+                  , border: "1px solid #334155"
+                  , borderRadius: "4px"
+                  , background: "#1e293b"
+                  , color: "#e2e8f0"
+                  , outline: "none"
+                  , fontFamily: "inherit"
+                  }
+              }
+          ]
+      , div { style: S.sidebarContent }
+          [ div {} (map (moduleGroup props) filtered)
+          ]
+      , div { style: S.sidebarBranding } (text "yoga-stories")
       ]
   where
   moduleGroup props s =
