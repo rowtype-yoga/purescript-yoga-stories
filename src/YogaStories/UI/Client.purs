@@ -9,6 +9,7 @@ import Effect (Effect)
 import Effect.Aff (launchAff_)
 import Effect.Class (liftEffect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
+import YogaStories.UI.Hash (Selection, useHashRoute)
 import Foreign (Foreign)
 import Promise (Promise)
 import Promise.Aff (toAffE)
@@ -43,25 +44,15 @@ clientMain = launchAff_ do
     root <- createRoot el
     renderRoot root (app stories)
 
--- Types
-type Selection = { moduleName :: Maybe String, exportName :: Maybe String }
-
-noSelection :: Selection
-noSelection = { moduleName: Nothing, exportName: Nothing }
-
 -- App
 app :: Array StoryModule -> JSX
 app = component "App" \stories -> React.do
-  sel /\ setSel <- React.useState noSelection
+  sel /\ onSelect <- useHashRoute
   pure $
     div { style: S.root }
       [ h1 { style: S.headerBar } "yoga-stories"
       , div { style: S.row }
-          [ sidebar
-              { stories
-              , selected: sel
-              , onSelect: \m e -> setSel \_ -> { moduleName: Just m, exportName: Just e }
-              }
+          [ sidebar { stories, selected: sel, onSelect }
           , mainPanel { selected: sel, stories }
           ]
       ]

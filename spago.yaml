@@ -21,6 +21,8 @@ package:
     - react-basic-hooks
     - strings
     - unsafe-coerce
+    - web-events
+    - web-html
     - yoga-fastify
     - yoga-json
     - yoga-react

@@ -452,7 +452,7 @@ inputStyle =
   }
 
 selectStyle :: { width :: String, background :: String, border :: String, borderRadius :: String, padding :: String, fontSize :: String, color :: String, outline :: String, boxSizing :: String }
-selectStyle = inputStyle
+selectStyle = inputStyle { padding = "6px 32px 6px 8px" }
 
 isJust :: forall a. Maybe a -> Boolean
 isJust (Just _) = true
