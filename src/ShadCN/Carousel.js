@@ -1,8 +1,8 @@
 import useEmblaCarousel from "embla-carousel-react";
 
-export const useEmblaCarouselImpl = () => {
-  const [ref, api] = useEmblaCarousel({});
-  return { ref, api };
+export const useEmblaCarouselImpl = (tuple, opts) => {
+  const [ref, api] = useEmblaCarousel(opts);
+  return tuple(ref)(api);
 };
 
 export const scrollPrevImpl = (api) => api.scrollPrev();

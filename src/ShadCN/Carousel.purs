@@ -5,7 +5,7 @@ import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toMaybe)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
-import Effect.Uncurried (EffectFn1, EffectFn3, runEffectFn1, runEffectFn3)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, runEffectFn1, runEffectFn2, runEffectFn3)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, ReactContext, Ref, createContext, provider)
 import React.Basic.Events (handler_)
@@ -16,7 +16,11 @@ import Yoga.React (component)
 import Yoga.React.DOM.HTML (button, div)
 import Yoga.React.DOM.Internal (class IsJSX)
 
-foreign import useEmblaCarouselImpl :: Effect { ref :: Ref (Nullable Node), api :: Nullable EmblaApi }
+foreign import useEmblaCarouselImpl :: forall a. EffectFn2 (Ref (Nullable Node) -> Nullable EmblaApi -> a) { | EmblaOptions } a
+
+type EmblaOptions :: Row Type
+type EmblaOptions = ()
+
 foreign import data EmblaApi :: Type
 foreign import scrollPrevImpl :: EffectFn1 EmblaApi Unit
 foreign import scrollNextImpl :: EffectFn1 EmblaApi Unit
@@ -47,7 +51,7 @@ carousel kids = carouselProviderComponent
 
 carouselProviderComponent :: { children :: Array JSX } -> JSX
 carouselProviderComponent = component "CarouselProvider" \props -> React.do
-  { ref, api: rawApi } <- React.unsafeRenderEffect useEmblaCarouselImpl
+  ref /\ rawApi <- React.unsafeRenderEffect (runEffectFn2 useEmblaCarouselImpl (/\) {})
   let mbApi = toMaybe rawApi
   canPrev /\ setCanPrev <- React.useState' false
   canNext /\ setCanNext <- React.useState' false
