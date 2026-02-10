@@ -3,12 +3,13 @@ module ShadCN.Carousel where
 import Prelude hiding (div)
 import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toMaybe)
-import Data.Tuple.Nested ((/\))
+import Data.Tuple.Nested (type (/\), (/\))
 import Effect (Effect)
 import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, runEffectFn1, runEffectFn2, runEffectFn3)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, ReactContext, Ref, createContext, provider)
 import React.Basic.Events (handler_)
+import React.Basic.Hooks (Hook, unsafeHook)
 import React.Basic.Hooks as React
 import Unsafe.Coerce (unsafeCoerce)
 import Web.DOM.Internal.Types (Node)
@@ -21,7 +22,12 @@ foreign import useEmblaCarouselImpl :: forall a. EffectFn2 (Ref (Nullable Node) 
 type EmblaOptions :: Row Type
 type EmblaOptions = ()
 
+foreign import data UseEmblaCarousel :: Type -> Type
 foreign import data EmblaApi :: Type
+
+useEmblaCarousel :: Hook UseEmblaCarousel (Ref (Nullable Node) /\ Nullable EmblaApi)
+useEmblaCarousel = unsafeHook (runEffectFn2 useEmblaCarouselImpl (/\) {})
+
 foreign import scrollPrevImpl :: EffectFn1 EmblaApi Unit
 foreign import scrollNextImpl :: EffectFn1 EmblaApi Unit
 foreign import canScrollPrevImpl :: EmblaApi -> Boolean
@@ -51,7 +57,7 @@ carousel kids = carouselProviderComponent
 
 carouselProviderComponent :: { children :: Array JSX } -> JSX
 carouselProviderComponent = component "CarouselProvider" \props -> React.do
-  ref /\ rawApi <- React.unsafeRenderEffect (runEffectFn2 useEmblaCarouselImpl (/\) {})
+  ref /\ rawApi <- useEmblaCarousel
   let mbApi = toMaybe rawApi
   canPrev /\ setCanPrev <- React.useState' false
   canNext /\ setCanNext <- React.useState' false
