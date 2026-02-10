@@ -29,10 +29,22 @@ useEmblaCarousel :: Hook UseEmblaCarousel (Ref (Nullable Node) /\ Nullable Embla
 useEmblaCarousel = unsafeHook (runEffectFn2 useEmblaCarouselImpl (/\) {})
 
 foreign import scrollPrevImpl :: EffectFn1 EmblaApi Unit
+
+scrollPrev :: EmblaApi -> Effect Unit
+scrollPrev = runEffectFn1 scrollPrevImpl
+
 foreign import scrollNextImpl :: EffectFn1 EmblaApi Unit
+
+scrollNext :: EmblaApi -> Effect Unit
+scrollNext = runEffectFn1 scrollNextImpl
+
 foreign import canScrollPrevImpl :: EmblaApi -> Boolean
 foreign import canScrollNextImpl :: EmblaApi -> Boolean
+
 foreign import onImpl :: EffectFn3 String (EmblaApi -> Effect Unit) EmblaApi Unit
+
+on :: String -> (EmblaApi -> Effect Unit) -> EmblaApi -> Effect Unit
+on = runEffectFn3 onImpl
 
 type CarouselCtx =
   { ref :: Ref (Nullable Node)
@@ -70,16 +82,16 @@ carouselProviderComponent = component "CarouselProvider" \props -> React.do
       Nothing -> pure (pure unit)
       Just api -> do
         onSelect api
-        runEffectFn3 onImpl "reInit" onSelect api
-        runEffectFn3 onImpl "select" onSelect api
+        on "reInit" onSelect api
+        on "select" onSelect api
         pure (pure unit)
   let
     prev = case mbApi of
       Nothing -> pure unit
-      Just api -> runEffectFn1 scrollPrevImpl api
+      Just api -> scrollPrev api
     next = case mbApi of
       Nothing -> pure unit
-      Just api -> runEffectFn1 scrollNextImpl api
+      Just api -> scrollNext api
   pure $ provider carouselContext { ref, canPrev, canNext, prev, next } props.children
 
 carouselViewportComponent :: { children :: Array JSX } -> JSX
