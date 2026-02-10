@@ -1,20 +1,17 @@
 module ShadCN.Accordion where
 
-import React.Basic (JSX)
-
-foreign import accordionImpl :: forall r. Record r -> JSX
-foreign import accordionItemImpl :: forall r. Record r -> JSX
-foreign import accordionTriggerImpl :: forall r. Record r -> JSX
-foreign import accordionContentImpl :: forall r. Record r -> JSX
+import React.Basic (JSX, element)
+import ShadCN.Radix as Radix
 
 accordion :: { type :: String, collapsible :: Boolean } -> Array JSX -> JSX
-accordion props kids = accordionImpl { type: props.type, collapsible: props.collapsible, children: kids }
+accordion props kids = element Radix.accordionRoot { type: props.type, collapsible: props.collapsible, children: kids }
 
-accordionItem :: { value :: String } -> Array JSX -> JSX
-accordionItem props kids = accordionItemImpl { value: props.value, children: kids }
+accordionItem :: String -> Array JSX -> JSX
+accordionItem value kids = element Radix.accordionItem { value, className: "border-b last:border-b-0", children: kids }
 
 accordionTrigger :: Array JSX -> JSX
-accordionTrigger kids = accordionTriggerImpl { children: kids }
+accordionTrigger kids = element Radix.accordionHeader { className: "flex", children:
+  [ element Radix.accordionTrigger { className: "flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline [&[data-state=open]>svg]:rotate-180", children: kids } ] }
 
 accordionContent :: Array JSX -> JSX
-accordionContent kids = accordionContentImpl { children: kids }
+accordionContent kids = element Radix.accordionContent { className: "data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm", children: kids }

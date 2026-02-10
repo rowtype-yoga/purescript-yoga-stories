@@ -1,16 +1,13 @@
 module ShadCN.Avatar where
 
-import React.Basic (JSX)
-
-foreign import avatarImpl :: forall r. Record r -> JSX
-foreign import avatarImageImpl :: forall r. Record r -> JSX
-foreign import avatarFallbackImpl :: forall r. Record r -> JSX
+import React.Basic (JSX, element)
+import ShadCN.Radix as Radix
 
 avatar :: Array JSX -> JSX
-avatar kids = avatarImpl { children: kids }
+avatar kids = element Radix.avatarRoot { className: "relative flex size-8 shrink-0 overflow-hidden rounded-full select-none", children: kids }
 
-avatarImage :: { src :: String, alt :: String } -> JSX
-avatarImage props = avatarImageImpl props
+avatarImage :: String -> JSX
+avatarImage src = element Radix.avatarImage { className: "aspect-square size-full", src }
 
 avatarFallback :: Array JSX -> JSX
-avatarFallback kids = avatarFallbackImpl { children: kids }
+avatarFallback kids = element Radix.avatarFallback { className: "bg-muted text-muted-foreground flex size-full items-center justify-center rounded-full text-sm", children: kids }

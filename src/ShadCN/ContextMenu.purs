@@ -1,28 +1,23 @@
 module ShadCN.ContextMenu where
 
-import React.Basic (JSX)
-
-foreign import contextMenuImpl :: forall r. Record r -> JSX
-foreign import contextMenuTriggerImpl :: forall r. Record r -> JSX
-foreign import contextMenuContentImpl :: forall r. Record r -> JSX
-foreign import contextMenuItemImpl :: forall r. Record r -> JSX
-foreign import contextMenuSeparatorImpl :: forall r. Record r -> JSX
-foreign import contextMenuLabelImpl :: forall r. Record r -> JSX
+import React.Basic (JSX, element)
+import ShadCN.Radix as Radix
 
 contextMenu :: Array JSX -> JSX
-contextMenu kids = contextMenuImpl { children: kids }
+contextMenu kids = element Radix.contextMenuRoot { children: kids }
 
 contextMenuTrigger :: Array JSX -> JSX
-contextMenuTrigger kids = contextMenuTriggerImpl { children: kids }
+contextMenuTrigger kids = element Radix.contextMenuTrigger { children: kids }
 
 contextMenuContent :: Array JSX -> JSX
-contextMenuContent kids = contextMenuContentImpl { children: kids }
+contextMenuContent kids = element Radix.contextMenuPortal { children:
+  [ element Radix.contextMenuContent { className: "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-50 min-w-[8rem] overflow-hidden rounded-md border p-1 shadow-md", children: kids } ] }
 
 contextMenuItem :: Array JSX -> JSX
-contextMenuItem kids = contextMenuItemImpl { children: kids }
+contextMenuItem kids = element Radix.contextMenuItem { className: "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50", children: kids }
 
-contextMenuSeparator :: {} -> JSX
-contextMenuSeparator props = contextMenuSeparatorImpl props
+contextMenuSeparator :: JSX
+contextMenuSeparator = element Radix.contextMenuSeparator { className: "bg-border -mx-1 my-1 h-px" }
 
 contextMenuLabel :: Array JSX -> JSX
-contextMenuLabel kids = contextMenuLabelImpl { children: kids }
+contextMenuLabel kids = element Radix.contextMenuLabel { className: "text-foreground px-2 py-1.5 text-sm font-medium", children: kids }

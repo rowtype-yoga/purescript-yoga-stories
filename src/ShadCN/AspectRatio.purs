@@ -1,8 +1,7 @@
 module ShadCN.AspectRatio where
 
-import React.Basic (JSX)
-
-foreign import aspectRatioImpl :: forall r. Record r -> JSX
+import React.Basic (JSX, element)
+import ShadCN.Radix as Radix
 
 aspectRatio :: Number -> Array JSX -> JSX
-aspectRatio ratio kids = aspectRatioImpl { ratio, children: kids }
+aspectRatio ratio kids = element Radix.aspectRatioRoot { ratio, children: kids }
