@@ -5,6 +5,7 @@ import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toMaybe)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
+import Effect.Uncurried (EffectFn1, EffectFn3, runEffectFn1, runEffectFn3)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, ReactContext, Ref, createContext, provider)
 import React.Basic.Events (handler_)
@@ -17,11 +18,11 @@ import Yoga.React.DOM.Internal (class IsJSX)
 
 foreign import useEmblaCarouselImpl :: Effect { ref :: Ref (Nullable Node), api :: Nullable EmblaApi }
 foreign import data EmblaApi :: Type
-foreign import scrollPrevImpl :: EmblaApi -> Effect Unit
-foreign import scrollNextImpl :: EmblaApi -> Effect Unit
+foreign import scrollPrevImpl :: EffectFn1 EmblaApi Unit
+foreign import scrollNextImpl :: EffectFn1 EmblaApi Unit
 foreign import canScrollPrevImpl :: EmblaApi -> Boolean
 foreign import canScrollNextImpl :: EmblaApi -> Boolean
-foreign import onImpl :: String -> (EmblaApi -> Effect Unit) -> EmblaApi -> Effect Unit
+foreign import onImpl :: EffectFn3 String (EmblaApi -> Effect Unit) EmblaApi Unit
 
 type CarouselCtx =
   { ref :: Ref (Nullable Node)
@@ -59,16 +60,16 @@ carouselProviderComponent = component "CarouselProvider" \props -> React.do
       Nothing -> pure (pure unit)
       Just api -> do
         onSelect api
-        onImpl "reInit" onSelect api
-        onImpl "select" onSelect api
+        runEffectFn3 onImpl "reInit" onSelect api
+        runEffectFn3 onImpl "select" onSelect api
         pure (pure unit)
   let
     prev = case mbApi of
       Nothing -> pure unit
-      Just api -> scrollPrevImpl api
+      Just api -> runEffectFn1 scrollPrevImpl api
     next = case mbApi of
       Nothing -> pure unit
-      Just api -> scrollNextImpl api
+      Just api -> runEffectFn1 scrollNextImpl api
   pure $ provider carouselContext { ref, canPrev, canNext, prev, next } props.children
 
 carouselViewportComponent :: { children :: Array JSX } -> JSX
