@@ -1,8 +1,9 @@
 module ShadCN.Sonner where
 
-import React.Basic (JSX)
+import React.Basic (JSX, ReactComponent)
+import Yoga.React.DOM.Internal (createElement)
 
-foreign import sonnerImpl :: forall r. Record r -> JSX
+foreign import toaster :: forall r. ReactComponent { | r }
 
-sonner :: {} -> JSX
-sonner props = sonnerImpl props
+sonner :: JSX
+sonner = createElement toaster {} ([] :: Array JSX)

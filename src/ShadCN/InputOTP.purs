@@ -1,20 +1,20 @@
 module ShadCN.InputOTP where
 
-import React.Basic (JSX)
+import React.Basic (JSX, ReactComponent)
+import Yoga.React.DOM.HTML (div)
+import Yoga.React.DOM.Internal (class IsJSX, createElement, text)
 
-foreign import inputOTPImpl :: forall r. Record r -> JSX
-foreign import inputOTPGroupImpl :: forall r. Record r -> JSX
-foreign import inputOTPSlotImpl :: forall r. Record r -> JSX
-foreign import inputOTPSeparatorImpl :: forall r. Record r -> JSX
+foreign import otpInput :: forall r. ReactComponent { | r }
+foreign import otpSlotImpl :: forall r. Record r -> JSX
 
-inputOTP :: forall r. Record r -> JSX
-inputOTP props = inputOTPImpl props
+inputOTP :: forall r. { | r } -> JSX
+inputOTP props = createElement otpInput { containerClassName: "flex items-center gap-2" } ([] :: Array JSX)
 
-inputOTPGroup :: Array JSX -> JSX
-inputOTPGroup kids = inputOTPGroupImpl { children: kids }
+inputOTPGroup :: forall kids. IsJSX kids => kids -> JSX
+inputOTPGroup = div { className: "flex items-center" }
 
-inputOTPSlot :: { index :: Int } -> JSX
-inputOTPSlot props = inputOTPSlotImpl props
+inputOTPSlot :: Int -> JSX
+inputOTPSlot index = otpSlotImpl { index }
 
-inputOTPSeparator :: {} -> JSX
-inputOTPSeparator props = inputOTPSeparatorImpl props
+inputOTPSeparator :: JSX
+inputOTPSeparator = div { role: "separator" } (text "-")

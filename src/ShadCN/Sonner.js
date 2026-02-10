@@ -1,6 +1,3 @@
-import { createElement } from "react"
-import { Toaster as SonnerToaster } from "sonner"
+import { Toaster } from "sonner"
 
-export function sonnerImpl(props) {
-  return createElement(SonnerToaster, { "data-slot": "sonner", ...props })
-}
+export var toaster = Toaster

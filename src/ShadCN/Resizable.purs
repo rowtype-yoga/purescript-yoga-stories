@@ -1,16 +1,17 @@
 module ShadCN.Resizable where
 
-import React.Basic (JSX)
+import React.Basic (JSX, ReactComponent)
+import Yoga.React.DOM.Internal (class IsJSX, createElement)
 
-foreign import resizablePanelGroupImpl :: forall r. Record r -> JSX
-foreign import resizablePanelImpl :: forall r. Record r -> JSX
-foreign import resizableHandleImpl :: forall r. Record r -> JSX
+foreign import resizablePanelGroup_ :: forall r. ReactComponent { | r }
+foreign import resizablePanel_ :: forall r. ReactComponent { | r }
+foreign import resizableHandle_ :: forall r. ReactComponent { | r }
 
-resizablePanelGroup :: String -> Array JSX -> JSX
-resizablePanelGroup direction kids = resizablePanelGroupImpl { direction, children: kids }
+resizablePanelGroup :: forall kids. IsJSX kids => String -> kids -> JSX
+resizablePanelGroup direction = createElement resizablePanelGroup_ { className: "flex h-full w-full data-[panel-group-direction=vertical]:flex-col", direction }
 
-resizablePanel :: Array JSX -> JSX
-resizablePanel kids = resizablePanelImpl { children: kids }
+resizablePanel :: forall kids. IsJSX kids => kids -> JSX
+resizablePanel = createElement resizablePanel_ {}
 
-resizableHandle :: {} -> JSX
-resizableHandle props = resizableHandleImpl props
+resizableHandle :: JSX
+resizableHandle = createElement resizableHandle_ { className: "bg-border relative flex w-px items-center justify-center" } ([] :: Array JSX)

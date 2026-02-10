@@ -5,32 +5,44 @@ import React.Basic (JSX)
 import Yoga.React.DOM.HTML (button)
 import Yoga.React.DOM.Internal (class IsJSX)
 
-buttonBase :: String
-buttonBase = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+-- | Variant x Size -> kids -> JSX
+btn :: String -> String -> forall kids. IsJSX kids => kids -> JSX
+btn variant size = button { className: base <> " " <> variant <> " " <> size }
 
-buttonDefault :: forall kids. IsJSX kids => kids -> JSX
-buttonDefault = button { className: buttonBase <> " bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2" }
+-- Variants
+default :: String
+default = "bg-primary text-primary-foreground hover:bg-primary/90"
 
-buttonDestructive :: forall kids. IsJSX kids => kids -> JSX
-buttonDestructive = button { className: buttonBase <> " bg-destructive text-white hover:bg-destructive/90 h-9 px-4 py-2" }
+destructive :: String
+destructive = "bg-destructive text-white hover:bg-destructive/90"
 
-buttonOutline :: forall kids. IsJSX kids => kids -> JSX
-buttonOutline = button { className: buttonBase <> " border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2" }
+outline :: String
+outline = "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground"
 
-buttonSecondary :: forall kids. IsJSX kids => kids -> JSX
-buttonSecondary = button { className: buttonBase <> " bg-secondary text-secondary-foreground hover:bg-secondary/80 h-9 px-4 py-2" }
+secondary :: String
+secondary = "bg-secondary text-secondary-foreground hover:bg-secondary/80"
 
-buttonGhost :: forall kids. IsJSX kids => kids -> JSX
-buttonGhost = button { className: buttonBase <> " hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2" }
+ghost :: String
+ghost = "hover:bg-accent hover:text-accent-foreground"
 
-buttonLink :: forall kids. IsJSX kids => kids -> JSX
-buttonLink = button { className: buttonBase <> " text-primary underline-offset-4 hover:underline h-9 px-4 py-2" }
+link :: String
+link = "text-primary underline-offset-4 hover:underline"
 
-buttonSm :: forall kids. IsJSX kids => kids -> JSX
-buttonSm = button { className: buttonBase <> " bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md gap-1.5 px-3" }
+-- Sizes
+md :: String
+md = "h-9 px-4 py-2"
 
-buttonLg :: forall kids. IsJSX kids => kids -> JSX
-buttonLg = button { className: buttonBase <> " bg-primary text-primary-foreground hover:bg-primary/90 h-10 rounded-md px-6" }
+sm :: String
+sm = "h-8 rounded-md gap-1.5 px-3"
 
-buttonIcon :: forall kids. IsJSX kids => kids -> JSX
-buttonIcon = button { className: buttonBase <> " bg-primary text-primary-foreground hover:bg-primary/90 size-9" }
+lg :: String
+lg = "h-10 rounded-md px-6"
+
+xs :: String
+xs = "h-6 gap-1 rounded-md px-2 text-xs"
+
+icon :: String
+icon = "size-9"
+
+base :: String
+base = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
