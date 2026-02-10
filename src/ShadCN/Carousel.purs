@@ -1,4 +1,9 @@
-module ShadCN.Carousel where
+module ShadCN.Carousel
+  ( carousel
+  , carouselItem
+  , carouselPrevious
+  , carouselNext
+  ) where
 
 import Prelude hiding (div)
 import Data.Maybe (Maybe(..))
@@ -63,17 +68,17 @@ carouselContext = unsafePerformEffect do
   createContext { ref: unsafeCoerce unit, canPrev: false, canNext: false, prev: pure unit, next: pure unit }
 
 carousel :: forall kids. IsJSX kids => kids -> JSX
-carousel kids = createElement carouselProviderComp {}
+carousel kids = createElement carouselProviderImpl {}
   [ div { className: "relative", role: "region" }
-      [ createElement carouselViewportComp {} [ div { className: "flex" } kids ]
+      [ createElement carouselViewportImpl {} [ div { className: "flex" } kids ]
       ]
   ]
 
-carouselProviderComp :: forall r. React.ReactComponent { | r }
-carouselProviderComp = unsafeCoerce carouselProviderComp_
+carouselProviderImpl :: forall r. React.ReactComponent { | r }
+carouselProviderImpl = unsafeCoerce carouselProviderImpl_
   where
-  carouselProviderComp_ :: React.ReactComponent { children :: React.ReactChildren JSX }
-  carouselProviderComp_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselProvider" \props -> React.do
+  carouselProviderImpl_ :: React.ReactComponent { children :: React.ReactChildren JSX }
+  carouselProviderImpl_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselProvider" \props -> React.do
     ref /\ rawApi <- useEmblaCarousel
     let mbApi = toMaybe rawApi
     canPrev /\ setCanPrev <- React.useState' false
@@ -99,11 +104,11 @@ carouselProviderComp = unsafeCoerce carouselProviderComp_
         Just api -> scrollNext api
     pure $ provider carouselContext { ref, canPrev, canNext, prev, next } (React.reactChildrenToArray props.children)
 
-carouselViewportComp :: forall r. React.ReactComponent { | r }
-carouselViewportComp = unsafeCoerce carouselViewportComp_
+carouselViewportImpl :: forall r. React.ReactComponent { | r }
+carouselViewportImpl = unsafeCoerce carouselViewportImpl_
   where
-  carouselViewportComp_ :: React.ReactComponent { children :: React.ReactChildren JSX }
-  carouselViewportComp_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselViewport" \props -> React.do
+  carouselViewportImpl_ :: React.ReactComponent { children :: React.ReactChildren JSX }
+  carouselViewportImpl_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselViewport" \props -> React.do
     ctx <- React.useContext carouselContext
     pure $ div { className: "overflow-hidden", ref: ctx.ref } (React.reactChildrenToArray props.children)
 
@@ -111,27 +116,27 @@ carouselItem :: forall kids. IsJSX kids => kids -> JSX
 carouselItem = div { className: "min-w-0 shrink-0 grow-0 basis-full", role: "group" }
 
 carouselPrevious :: forall kids. IsJSX kids => kids -> JSX
-carouselPrevious = createElement carouselPreviousComp
+carouselPrevious = createElement carouselPreviousImpl
   { className: "absolute z-10 flex size-8 items-center justify-center rounded-full border bg-background shadow-sm disabled:opacity-50 -left-12 top-1/2 -translate-y-1/2"
   }
 
-carouselPreviousComp :: forall r. React.ReactComponent { | r }
-carouselPreviousComp = unsafeCoerce carouselPreviousComp_
+carouselPreviousImpl :: forall r. React.ReactComponent { | r }
+carouselPreviousImpl = unsafeCoerce carouselPreviousImpl_
   where
-  carouselPreviousComp_ :: React.ReactComponent { children :: React.ReactChildren JSX }
-  carouselPreviousComp_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselPrevious" \props -> React.do
+  carouselPreviousImpl_ :: React.ReactComponent { children :: React.ReactChildren JSX }
+  carouselPreviousImpl_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselPrevious" \props -> React.do
     ctx <- React.useContext carouselContext
     pure $ button { disabled: not ctx.canPrev, onClick: handler_ ctx.prev } (React.reactChildrenToArray props.children)
 
 carouselNext :: forall kids. IsJSX kids => kids -> JSX
-carouselNext = createElement carouselNextComp
+carouselNext = createElement carouselNextImpl
   { className: "absolute z-10 flex size-8 items-center justify-center rounded-full border bg-background shadow-sm disabled:opacity-50 -right-12 top-1/2 -translate-y-1/2"
   }
 
-carouselNextComp :: forall r. React.ReactComponent { | r }
-carouselNextComp = unsafeCoerce carouselNextComp_
+carouselNextImpl :: forall r. React.ReactComponent { | r }
+carouselNextImpl = unsafeCoerce carouselNextImpl_
   where
-  carouselNextComp_ :: React.ReactComponent { children :: React.ReactChildren JSX }
-  carouselNextComp_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselNext" \props -> React.do
+  carouselNextImpl_ :: React.ReactComponent { children :: React.ReactChildren JSX }
+  carouselNextImpl_ = unsafePerformEffect $ React.reactComponentWithChildren "CarouselNext" \props -> React.do
     ctx <- React.useContext carouselContext
     pure $ button { disabled: not ctx.canNext, onClick: handler_ ctx.next } (React.reactChildrenToArray props.children)
