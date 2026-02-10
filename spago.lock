@@ -20,6 +20,8 @@
             "node-buffer",
             "node-fs",
             "node-path",
+            "nullable",
+            "optparse",
             "prelude",
             "react-basic",
             "react-basic-dom",
