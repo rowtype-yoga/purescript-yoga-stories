@@ -3,7 +3,8 @@ module YogaStories.UI.Hash
   , parseHash
   , toHash
   , useHashRoute
-  , useHashParams
+  , readHashProps
+  , writeHashProps
   ) where
 
 import Prelude
@@ -89,34 +90,20 @@ useHashRoute = React.do
       Location.setHash full loc
   pure (sel /\ onSelect)
 
-useHashParams
-  :: forall hooks
-   . Render hooks
-       (UseEffect Unit (UseState (Maybe String) hooks))
-       (Maybe String /\ (String -> Effect Unit))
-useHashParams = React.do
-  params /\ setParams <- React.useState' (Nothing :: Maybe String)
+readHashProps :: Effect (Maybe String)
+readHashProps = do
+  w <- window
+  loc <- Window.location w
+  h <- Location.hash loc
+  pure (extractProps h)
 
-  React.useEffectOnce do
-    w <- window
-    loc <- Window.location w
-    h <- Location.hash loc
-    setParams (extractProps h)
-    listener <- eventListener \_ -> do
-      h' <- Location.hash loc
-      setParams (extractProps h')
-    let target = Window.toEventTarget w
-    addEventListener (EventType "hashchange") listener false target
-    pure (removeEventListener (EventType "hashchange") listener false target)
-
-  let
-    writeParams json = do
-      w <- window
-      loc <- Window.location w
-      h <- Location.hash loc
-      let base = hashPath h
-      Location.setHash (base <> "?props=" <> encodeURIComponent json) loc
-  pure (params /\ writeParams)
+writeHashProps :: String -> Effect Unit
+writeHashProps json = do
+  w <- window
+  loc <- Window.location w
+  h <- Location.hash loc
+  let base = hashPath h
+  Location.setHash (base <> "?props=" <> encodeURIComponent json) loc
 
 -- Extract the props= value from a hash query string, URL-decoded
 extractProps :: String -> Maybe String
