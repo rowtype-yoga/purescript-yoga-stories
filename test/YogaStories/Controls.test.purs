@@ -6,7 +6,8 @@ import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
-import YogaStories.Controls (buildInitialValues, initialValue, slider, select, color, enum)
+import React.Basic.DOM (text) as R
+import YogaStories.Controls (buildInitialValues, customControl, fromParam, initialValue, toParam, slider, select, color, enum)
 
 data Variant = A | B | C
 
@@ -77,3 +78,35 @@ spec = describe "Controls" do
       let values = buildInitialValues schema
       values.group.val `shouldEqual` 0.5
       values.group.name `shouldEqual` "test"
+
+  describe "CustomControl" do
+    let
+      stringCtrl = customControl
+        { render: \_ _ -> R.text ""
+        , toStr: identity
+        , fromStr: Just
+        }
+
+    it "extracts initial value" do
+      initialValue (stringCtrl "hello") `shouldEqual` "hello"
+
+    it "serializes via toStr" do
+      toParam (stringCtrl "x") "hello" `shouldEqual` "hello"
+
+    it "deserializes via fromStr" do
+      fromParam (stringCtrl "x") "world" `shouldEqual` Just "world"
+
+    it "fromStr can reject invalid input" do
+      let
+        numCtrl = customControl
+          { render: \_ _ -> R.text ""
+          , toStr: show
+          , fromStr: \_ -> Nothing
+          }
+      fromParam (numCtrl 0.0) "bad" `shouldEqual` (Nothing :: Maybe Number)
+
+    it "works in buildInitialValues" do
+      let schema = { name: "test", custom: stringCtrl "default" }
+      let values = buildInitialValues schema
+      values.name `shouldEqual` "test"
+      values.custom `shouldEqual` "default"

@@ -45,7 +45,7 @@ import Record.Builder (Builder)
 import Record.Builder as Builder
 import Type.Proxy (Proxy(..))
 import Yoga.JSON (readJSON_, writeJSON)
-import YogaStories.Controls.Types (class EnumOptions, class GenericEnumOptions, Color(..), Enum(..), Select(..), Slider(..), color, enum, enumOptions, genericEnumOptions, select, slider)
+import YogaStories.Controls.Types (class EnumOptions, class GenericEnumOptions, Color(..), CustomControl(..), Enum(..), Select(..), Slider(..), color, customControl, enum, enumOptions, genericEnumOptions, select, slider)
 
 -- FFI
 foreign import inputImpl :: forall r. Record r -> JSX
@@ -90,6 +90,9 @@ instance InitialValue Color String where
 
 instance InitialValue (Enum a) a where
   initialValue (Enum e) = e.value
+
+instance InitialValue (CustomControl value) value where
+  initialValue (CustomControl c) = c.value
 
 instance InitialValue (Maybe String) (Maybe String) where
   initialValue = identity
@@ -252,6 +255,10 @@ instance (Generic a rep, GenericToString rep, GenericFromString rep, EnumOptions
         }
         (map (\opt -> el "option" { value: opt } [ txt opt ]) (enumOptions (Proxy :: Proxy a)))
     ]
+
+instance RenderControl (CustomControl value) value where
+  renderControl (CustomControl c) lbl val setter = controlRow lbl
+    [ c.render val setter ]
 
 instance RenderControl (Maybe String) (Maybe String) where
   renderControl _ lbl val setter = controlRow lbl
@@ -444,6 +451,9 @@ instance ToParam Color String where
 instance (Generic a rep, GenericToString rep) => ToParam (Enum a) a where
   toParam _ = genericToString <<< from
 
+instance ToParam (CustomControl value) value where
+  toParam (CustomControl c) = c.toStr
+
 instance ToParam (Maybe String) (Maybe String) where
   toParam _ Nothing = ""
   toParam _ (Just s) = s
@@ -503,6 +513,9 @@ instance FromParam Color String where
 
 instance (Generic a rep, GenericFromString rep) => FromParam (Enum a) a where
   fromParam _ s = to <$> genericFromString s
+
+instance FromParam (CustomControl value) value where
+  fromParam (CustomControl c) = c.fromStr
 
 instance FromParam (Maybe String) (Maybe String) where
   fromParam _ "" = Just Nothing

@@ -38,8 +38,11 @@ export async function startDevServer({
       alias: {
         "/output": resolve(userDir, config.outputDir),
         "/user": userDir,
+        react: resolve(userDir, "node_modules/react"),
+        "react-dom": resolve(userDir, "node_modules/react-dom"),
         ...userConfig.alias,
       },
+      dedupe: ["react", "react-dom"],
     },
   });
 

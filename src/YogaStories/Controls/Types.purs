@@ -11,13 +11,18 @@ module YogaStories.Controls.Types
   , enumOptions
   , class GenericEnumOptions
   , genericEnumOptions
+  , CustomControl(..)
+  , customControl
   ) where
 
 import Prelude
 
 import Data.Generic.Rep (class Generic, Constructor, NoArguments, Sum)
+import Data.Maybe (Maybe)
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, reflectSymbol)
+import Effect (Effect)
+import React.Basic (JSX)
 import Type.Proxy (Proxy(..))
 
 newtype Slider = Slider { value :: Number, min :: Number, max :: Number, step :: Number }
@@ -67,3 +72,27 @@ instance (Generic a rep, GenericEnumOptions rep) => EnumOptions a where
 
 enum :: forall a. EnumOptions a => a -> Enum a
 enum value = Enum { value, options: enumOptions (Proxy :: Proxy a) }
+
+newtype CustomControl value = CustomControl
+  { value :: value
+  , render :: value -> (value -> Effect Unit) -> JSX
+  , toStr :: value -> String
+  , fromStr :: String -> Maybe value
+  }
+
+derive instance Newtype (CustomControl value) _
+
+customControl
+  :: forall value
+   . { render :: value -> (value -> Effect Unit) -> JSX
+     , toStr :: value -> String
+     , fromStr :: String -> Maybe value
+     }
+  -> value
+  -> CustomControl value
+customControl config value = CustomControl
+  { value
+  , render: config.render
+  , toStr: config.toStr
+  , fromStr: config.fromStr
+  }
