@@ -1,3 +1,5 @@
+import "./code-viewer.js";
+
 if (!window.__yogaStoriesInitialised) {
   window.__yogaStoriesInitialised = true;
   const { clientMain } = await import("/output/YogaStories.UI.Client/index.js");

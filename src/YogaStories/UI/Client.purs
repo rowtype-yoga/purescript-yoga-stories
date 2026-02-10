@@ -4,7 +4,7 @@ import Prelude hiding (div)
 
 import Data.Array as Array
 import Data.Array (find)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Aff (launchAff_)
@@ -14,7 +14,7 @@ import Foreign (Foreign)
 import Promise (Promise)
 import Promise.Aff (toAffE)
 import Data.String as String
-import React.Basic (JSX)
+import React.Basic (JSX, element)
 import React.Basic.DOM as R
 import React.Basic.DOM.Client (createRoot, renderRoot)
 import React.Basic.DOM.Events (targetValue)
@@ -23,7 +23,7 @@ import React.Basic.Hooks as React
 import React.Basic.Hooks.Internal (unsafeRenderEffect)
 import Web.DOM (Element)
 import Yoga.React (component)
-import Yoga.React.DOM.HTML (button, code, details, div, h3, nav, pre, summary)
+import Yoga.React.DOM.HTML (button, details, div, h3, nav, summary)
 import Yoga.React.DOM.Internal (text)
 import YogaStories.Types (StoryModule)
 import YogaStories.UI.Hash (Selection, useHashRoute)
@@ -36,6 +36,7 @@ foreign import unsafeGetPropertyImpl :: EffectFn2 String Foreign JSX
 foreign import getElementByIdImpl :: String -> Effect Element
 foreign import onModuleUpdateImpl :: (String -> Effect Unit) -> Effect Unit
 foreign import onStoriesUpdateImpl :: Effect Unit -> Effect Unit
+foreign import codeViewerComponent :: React.ReactComponent { code :: String }
 
 unsafeGetProperty :: String -> Foreign -> Effect JSX
 unsafeGetProperty = runEffectFn2 unsafeGetPropertyImpl
@@ -108,9 +109,10 @@ sidebar = component "Sidebar" \props -> React.do
       , div { style: S.sidebarBranding } (text "yoga-stories")
       ]
   where
-  moduleGroup props s =
+  moduleGroup props s = do
+    let label = String.stripSuffix (String.Pattern ".Stories") s.moduleName # fromMaybe s.moduleName
     div {}
-      [ div { style: S.moduleLabel } (text s.moduleName)
+      [ div { style: S.moduleLabel } (text label)
       , div {} (map (exportBtn props s.moduleName) s.exports)
       ]
 
@@ -192,6 +194,5 @@ sourceView Nothing = mempty
 sourceView (Just info) =
   details { style: S.sourceToggle }
     [ summary { style: S.sourceSummary } (text ("Source: " <> info.sourcePath))
-    , pre { style: S.sourceBlock }
-        [ code { style: S.sourceCode } (text info.sourceCode) ]
+    , element codeViewerComponent { code: info.sourceCode }
     ]

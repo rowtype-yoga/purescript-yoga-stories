@@ -25,3 +25,5 @@ export function onStoriesUpdateImpl(callback) {
     window.__yogaStoriesRefreshStories = () => callback();
   };
 }
+
+export const codeViewerComponent = window.__yogaStoriesCodeViewer || "pre";
