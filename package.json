@@ -6,14 +6,7 @@
     "test": "spago test",
     "test:js": "bunx vitest run cli/discovery.test.js"
   },
-  "dependencies": {
-    "radix-ui": "^1.4.0",
-    "vaul": "^1.1.0",
-    "embla-carousel-react": "^8.0.0",
-    "input-otp": "^1.4.0",
-    "react-resizable-panels": "^4.0.0",
-    "sonner": "^2.0.0"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
