@@ -97,6 +97,9 @@ storyHeader = css
 storyTitle :: CSS
 storyTitle = css { color: "#818cf8", fontSize: "16px", margin: "0" }
 
+toolbarButtons :: CSS
+toolbarButtons = css { display: "flex", gap: "4px" }
+
 layoutToggle :: CSS
 layoutToggle = css
   { border: "1px solid #334155"

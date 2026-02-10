@@ -1,19 +1,27 @@
 .ys-layout-right, .ys-layout-bottom {
-  background: #1e293b;
   border: 1px solid #334155;
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 24px;
 }
+
+.ys-layout-right > *, .ys-layout-bottom > * { display: contents; }
+
 .ys-layout-right {
   display: grid;
   grid-template-columns: 1fr 320px;
 }
+
 .ys-layout-right .ys-controls {
   border-left: 1px solid #334155;
 }
+
 .ys-layout-bottom .ys-controls {
   border-top: 1px solid #334155;
 }
+
 .ys-preview { padding: 24px; }
-.ys-controls { padding: 16px; overflow-y: auto; }
+.ys-controls { padding: 16px; overflow-y: auto; background: #1e293b; }
+
+.ys-stage-dark .ys-preview { background: #020617; }
+.ys-stage-light .ys-preview { background: #ffffff; color: #0f172a; }

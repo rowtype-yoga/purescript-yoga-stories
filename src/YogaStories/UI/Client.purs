@@ -94,6 +94,7 @@ mainPanel :: { selected :: Selection, stories :: Array StoryModule } -> JSX
 mainPanel = component "MainPanel" \props -> React.do
   loaded /\ setLoaded <- React.useState (Nothing :: Maybe { name :: String, mod :: Foreign })
   layoutRight /\ setLayoutRight <- React.useState' true
+  stageDark /\ setStageDark <- React.useState' true
 
   React.useEffect props.selected.moduleName do
     case props.selected.moduleName of
@@ -106,7 +107,9 @@ mainPanel = component "MainPanel" \props -> React.do
         pure mempty
 
   let layoutClass = if layoutRight then "ys-layout-right" else "ys-layout-bottom"
+  let stageClass = if stageDark then "ys-stage-dark" else "ys-stage-light"
   let toggleLabel = if layoutRight then "↓" else "→"
+  let stageLabel = if stageDark then "☀" else "☾"
 
   pure case props.selected.moduleName, props.selected.exportName of
     Just modName, Just expName -> do
@@ -119,24 +122,31 @@ mainPanel = component "MainPanel" \props -> React.do
           div { style: S.panel }
             [ div { style: S.storyHeader }
                 [ h3 { style: S.storyTitle } (text key)
-                , button
-                    { style: S.layoutToggle
-                    , onClick: handler_ (setLayoutRight (not layoutRight))
-                    }
-                    (text toggleLabel)
+                , div { style: S.toolbarButtons }
+                    [ button
+                        { style: S.layoutToggle
+                        , onClick: handler_ (setStageDark (not stageDark))
+                        }
+                        (text stageLabel)
+                    , button
+                        { style: S.layoutToggle
+                        , onClick: handler_ (setLayoutRight (not layoutRight))
+                        }
+                        (text toggleLabel)
+                    ]
                 ]
-            , storyView { mod: l.mod, exportName: expName, layoutClass }
+            , storyView { mod: l.mod, exportName: expName, layoutClass, stageClass }
             , sourceView info
             ]
     _, _ ->
       div { style: S.panelPlaceholder } (text "Select a story")
 
 -- Renders a single story export
-storyView :: { mod :: Foreign, exportName :: String, layoutClass :: String } -> JSX
+storyView :: { mod :: Foreign, exportName :: String, layoutClass :: String, stageClass :: String } -> JSX
 storyView = component "StoryView" \props -> React.do
   jsx <- unsafeRenderEffect $ unsafeGetProperty props.exportName props.mod
   pure $
-    R.div { className: props.layoutClass, children: [ jsx ] }
+    R.div { className: props.layoutClass <> " " <> props.stageClass, children: [ jsx ] }
 
 -- Source code collapsible
 sourceView :: Maybe StoryModule -> JSX
