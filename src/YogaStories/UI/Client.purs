@@ -13,6 +13,7 @@ import Foreign (Foreign)
 import Promise (Promise)
 import Promise.Aff (toAffE)
 import React.Basic (JSX)
+import React.Basic.DOM as R
 import React.Basic.DOM.Client (createRoot, renderRoot)
 import React.Basic.Events (handler_)
 import React.Basic.Hooks as React
@@ -92,6 +93,7 @@ sidebar = component "Sidebar" \props -> React.do
 mainPanel :: { selected :: Selection, stories :: Array StoryModule } -> JSX
 mainPanel = component "MainPanel" \props -> React.do
   loaded /\ setLoaded <- React.useState (Nothing :: Maybe { name :: String, mod :: Foreign })
+  layoutRight /\ setLayoutRight <- React.useState' true
 
   React.useEffect props.selected.moduleName do
     case props.selected.moduleName of
@@ -103,6 +105,9 @@ mainPanel = component "MainPanel" \props -> React.do
           liftEffect $ setLoaded \_ -> Just { name: modName, mod }
         pure mempty
 
+  let layoutClass = if layoutRight then "ys-layout-right" else "ys-layout-bottom"
+  let toggleLabel = if layoutRight then "↓" else "→"
+
   pure case props.selected.moduleName, props.selected.exportName of
     Just modName, Just expName -> do
       let key = modName <> "." <> expName
@@ -112,19 +117,26 @@ mainPanel = component "MainPanel" \props -> React.do
           div { style: S.panel <> S.muted } (text "Loading...")
         Just l ->
           div { style: S.panel }
-            [ h3 { style: S.storyTitle } (text key)
-            , storyView { mod: l.mod, exportName: expName }
+            [ div { style: S.storyHeader }
+                [ h3 { style: S.storyTitle } (text key)
+                , button
+                    { style: S.layoutToggle
+                    , onClick: handler_ (setLayoutRight (not layoutRight))
+                    }
+                    (text toggleLabel)
+                ]
+            , storyView { mod: l.mod, exportName: expName, layoutClass }
             , sourceView info
             ]
     _, _ ->
       div { style: S.panelPlaceholder } (text "Select a story")
 
 -- Renders a single story export
-storyView :: { mod :: Foreign, exportName :: String } -> JSX
+storyView :: { mod :: Foreign, exportName :: String, layoutClass :: String } -> JSX
 storyView = component "StoryView" \props -> React.do
   jsx <- unsafeRenderEffect $ unsafeGetProperty props.exportName props.mod
   pure $
-    div { style: S.storyCard } [ jsx ]
+    R.div { className: props.layoutClass, children: [ jsx ] }
 
 -- Source code collapsible
 sourceView :: Maybe StoryModule -> JSX

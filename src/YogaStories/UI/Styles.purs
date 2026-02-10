@@ -86,16 +86,27 @@ panel = css { flex: "1", overflowY: "auto", padding: "24px" }
 panelPlaceholder :: CSS
 panelPlaceholder = flex1 <> center <> muted
 
-storyTitle :: CSS
-storyTitle = css { color: "#818cf8", fontSize: "16px", margin: "0 0 16px 0" }
+storyHeader :: CSS
+storyHeader = css
+  { display: "flex"
+  , alignItems: "center"
+  , justifyContent: "space-between"
+  , marginBottom: "16px"
+  }
 
-storyCard :: CSS
-storyCard = css
-  { backgroundColor: "#1e293b"
-  , border: "1px solid #334155"
-  , borderRadius: "8px"
-  , padding: "24px"
-  , marginBottom: "24px"
+storyTitle :: CSS
+storyTitle = css { color: "#818cf8", fontSize: "16px", margin: "0" }
+
+layoutToggle :: CSS
+layoutToggle = css
+  { border: "1px solid #334155"
+  , borderRadius: "4px"
+  , background: "#1e293b"
+  , color: "#94a3b8"
+  , padding: "4px 8px"
+  , cursor: "pointer"
+  , fontSize: "14px"
+  , fontFamily: "inherit"
   }
 
 -- Source viewer

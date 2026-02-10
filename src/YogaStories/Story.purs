@@ -26,6 +26,6 @@ story name comp schema = storyRenderer { name, component: comp, schema }
     values /\ setValues <- React.useState' (buildInitialValues props.schema)
     let controls = renderControls (Proxy :: Proxy rl) props.schema values setValues
     pure $ R.div_
-      [ props.component values
-      , controlsPanel controls
+      [ R.div { className: "ys-preview", children: [ props.component values ] }
+      , R.div { className: "ys-controls", children: [ controlsPanel controls ] }
       ]
