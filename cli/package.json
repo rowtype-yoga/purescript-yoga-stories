@@ -1,6 +1,6 @@
 {
   "name": "yoga-stories",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "bin": {
     "yoga-stories": "bin/cli.js"

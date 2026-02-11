@@ -103,7 +103,7 @@ sidebar = component "Sidebar" \props -> React.do
                   }
               }
           ]
-      , div { style: S.sidebarContent }
+      , div { style: S.sidebarContent, className: "ys-sidebar-scroll" }
           [ div {} (map (moduleGroup props) filtered)
           ]
       , div { style: S.sidebarBranding } (text "yoga-stories")
