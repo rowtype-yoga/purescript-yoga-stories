@@ -155,9 +155,11 @@ mainPanel = component "MainPanel" \props -> React.do
           liftEffect $ setLoaded \_ -> Just { name: modName, mod }
         pure mempty
 
-  let layoutClass = "ys-layout-right"
+  layoutRight /\ setLayoutRight <- React.useState' true
+  let layoutClass = if layoutRight then "ys-layout-right" else "ys-layout-bottom"
   let stageClass = if stageDark then "ys-stage-dark" else "ys-stage-light"
   let stageLabel = if stageDark then "☀" else "☾"
+  let toggleLabel = if layoutRight then "↓" else "→"
 
   pure case props.selected.moduleName, props.selected.exportName of
     Just modName, Just expName -> do
@@ -177,6 +179,11 @@ mainPanel = component "MainPanel" \props -> React.do
                         , onClick: handler_ (setStageDark (not stageDark))
                         }
                         (text stageLabel)
+                    , button
+                        { style: S.layoutToggle
+                        , onClick: handler_ (setLayoutRight (not layoutRight))
+                        }
+                        (text toggleLabel)
                     ]
                 ]
             , storyView { mod: l.mod, exportName: expName, layoutClass, stageClass }
