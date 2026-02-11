@@ -9,11 +9,16 @@ const haskellLang = StreamLanguage.define(haskell);
 
 const noEditableExt = EditorView.editable.of(false);
 
+const fontTheme = EditorView.theme({
+  "&": { fontFamily: "'Martian Mono', ui-monospace, monospace" },
+  ".cm-gutters": { fontFamily: "'Martian Mono', ui-monospace, monospace" },
+});
+
 export function CodeViewer({ code }) {
   return React.createElement(CodeMirror, {
     value: code,
     theme: tokyoNight,
-    extensions: [haskellLang, noEditableExt],
+    extensions: [haskellLang, noEditableExt, fontTheme],
     basicSetup: { lineNumbers: true, foldGutter: false, highlightActiveLine: false },
     editable: false,
   });
