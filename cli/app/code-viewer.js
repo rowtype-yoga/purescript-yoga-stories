@@ -10,8 +10,7 @@ const haskellLang = StreamLanguage.define(haskell);
 const noEditableExt = EditorView.editable.of(false);
 
 const fontTheme = EditorView.theme({
-  "&": { fontFamily: "'JetBrains Mono', ui-monospace, monospace" },
-  ".cm-gutters": { fontFamily: "'JetBrains Mono', ui-monospace, monospace" },
+  ".cm-scroller": { fontFamily: "'JetBrains Mono', ui-monospace, monospace" },
 });
 
 export function CodeViewer({ code }) {
