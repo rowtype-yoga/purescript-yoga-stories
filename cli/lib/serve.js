@@ -30,7 +30,7 @@ export async function startDevServer({
       port,
       open,
       fs: {
-        allow: [appDir, userDir],
+        allow: [appDir, resolve(__dirname, ".."), userDir],
       },
     },
     plugins: [yogaStoriesPlugin(config), ...userConfig.plugins],
