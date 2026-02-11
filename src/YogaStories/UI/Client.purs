@@ -210,10 +210,10 @@ sourceView (Just info) = do
         Just code ->
           details { style: S.sourceToggle }
             [ summary { style: S.sourceSummary } (text ("Component: " <> label))
-            , element codeViewerComponent { code }
+            , div { style: S.sourceCode } [ element codeViewerComponent { code } ]
             ]
     , details { style: S.sourceToggle }
         [ summary { style: S.sourceSummary } (text ("Story: " <> info.sourcePath))
-        , element codeViewerComponent { code: info.sourceCode }
+        , div { style: S.sourceCode } [ element codeViewerComponent { code: info.sourceCode } ]
         ]
     ]
