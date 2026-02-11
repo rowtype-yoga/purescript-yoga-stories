@@ -18,6 +18,7 @@
     "@codemirror/language": "^6.12.1",
     "@codemirror/legacy-modes": "^6.5.2",
     "@uiw/codemirror-theme-tokyo-night": "^4.25.4",
+    "@fontsource/martian-mono": "^5.2.7",
     "@uiw/react-codemirror": "^4.25.4",
     "vite": "^7.3.1"
   },
