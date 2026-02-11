@@ -1,4 +1,3 @@
-import "@fontsource/martian-mono";
 export function dynamicImportImpl(path) {
   return () => import(/* @vite-ignore */ path + "?t=" + Date.now());
 }

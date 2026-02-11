@@ -1,3 +1,4 @@
+import "@fontsource/martian-mono";
 import "./code-viewer.js";
 
 if (!window.__yogaStoriesInitialised) {
