@@ -1,47 +1,51 @@
+workspace: {}
+
 package:
   name: yoga-stories
+  publish:
+    version: 0.1.0
+    license: MIT
+    exclude:
+      - "src/Main.purs"
+    location:
+      githubOwner: rowtype-yoga
+      githubRepo: purescript-yoga-stories
   dependencies:
-    - aff
-    - arrays
-    - console
-    - effect
-    - either
-    - foldable-traversable
-    - foreign
-    - foreign-object
-    - js-promise
-    - js-promise-aff
-    - maybe
-    - newtype
-    - nullable
-    - node-buffer
-    - node-fs
-    - node-path
-    - optparse
-    - prelude
-    - react-basic
-    - react-basic-dom
-    - react-basic-hooks
-    - strings
-    - unsafe-coerce
-    - web-events
-    - web-html
-    - yoga-fastify
-    - yoga-json
-    - yoga-react
-    - yoga-react-dom
+    - aff: ">=8.0.0 <9.0.0"
+    - arrays: ">=7.3.0 <8.0.0"
+    - console: ">=6.1.0 <7.0.0"
+    - control: ">=6.0.0 <7.0.0"
+    - effect: ">=4.0.0 <5.0.0"
+    - either: ">=6.1.0 <7.0.0"
+    - exceptions: ">=6.1.0 <7.0.0"
+    - foldable-traversable: ">=6.0.0 <7.0.0"
+    - foreign: ">=7.0.0 <8.0.0"
+    - foreign-object: ">=4.1.0 <5.0.0"
+    - js-promise: ">=1.0.0 <2.0.0"
+    - js-promise-aff: ">=1.0.0 <2.0.0"
+    - maybe: ">=6.0.0 <7.0.0"
+    - newtype: ">=5.0.0 <6.0.0"
+    - node-buffer: ">=9.0.0 <10.0.0"
+    - node-fs: ">=9.2.0 <10.0.0"
+    - node-path: ">=5.0.1 <6.0.0"
+    - nullable: ">=6.0.0 <7.0.0"
+    - optparse: ">=5.0.1 <6.0.0"
+    - prelude: ">=6.0.2 <7.0.0"
+    - react-basic: ">=17.0.0 <18.0.0"
+    - react-basic-dom: ">=6.1.0 <7.0.0"
+    - react-basic-hooks: ">=8.2.0 <9.0.0"
+    - record: ">=4.0.0 <5.0.0"
+    - strings: ">=6.0.1 <7.0.0"
+    - tuples: ">=7.0.0 <8.0.0"
+    - web-dom: ">=6.0.0 <7.0.0"
+    - web-events: ">=4.0.0 <5.0.0"
+    - web-html: ">=4.1.1 <5.0.0"
+    - yoga-fastify: ">=0.3.0 <0.4.0"
+    - yoga-json: ">=5.2.0 <6.0.0"
+    - yoga-react: ">=1.0.1 <2.0.0"
+    - yoga-react-dom: ">=1.0.3 <2.0.0"
   test:
     main: Test.Main
     dependencies:
-      - spec
-      - spec-discovery
-workspace:
-  packageSet:
-    registry: 73.0.0
-  extraPackages:
-    yoga-fastify:
-      path: /Users/mark/Developer/purescript-yoga-fastify
-    yoga-react:
-      path: /Users/mark/Developer/purescript-yoga-react
-    yoga-http-api: "0.1.4"
-    yoga-options: "0.1.0"
+      - spec: ">=7.0.0 <9.0.0"
+      - spec-discovery: ">=8.0.0 <9.0.0"
