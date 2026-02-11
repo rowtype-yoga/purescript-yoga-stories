@@ -85,17 +85,21 @@ nav button {
   display: contents;
 }
 
-.ys-layout-right {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-}
-
-.ys-layout-right .ys-controls {
-  border-left: 1px solid #334155;
-}
-
+.ys-layout-right .ys-controls,
 .ys-layout-bottom .ys-controls {
   border-top: 1px solid #334155;
+}
+
+@media (min-width: 800px) {
+  .ys-layout-right {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+  }
+
+  .ys-layout-right .ys-controls {
+    border-top: none;
+    border-left: 1px solid #334155;
+  }
 }
 
 .ys-preview {

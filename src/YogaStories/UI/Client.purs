@@ -155,7 +155,7 @@ mainPanel = component "MainPanel" \props -> React.do
           liftEffect $ setLoaded \_ -> Just { name: modName, mod }
         pure mempty
 
-  let layoutClass = "ys-layout-bottom"
+  let layoutClass = "ys-layout-right"
   let stageClass = if stageDark then "ys-stage-dark" else "ys-stage-light"
   let stageLabel = if stageDark then "☀" else "☾"
 
