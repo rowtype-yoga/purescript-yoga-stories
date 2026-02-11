@@ -1,20 +1,20 @@
 {
   "name": "purescript-yoga-stories",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "test": "spago test",
-    "test:js": "bunx vitest run cli/discovery.test.js"
-  },
-  "dependencies": {
-    "@fontsource/jetbrains-mono": "^5.2.8"
+  "devDependencies": {
+    "react": "19",
+    "react-dom": "19"
   },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
   },
-  "devDependencies": {
-    "react": "19",
-    "react-dom": "19"
+  "private": true,
+  "scripts": {
+    "test": "spago test",
+    "test:js": "bunx vitest run cli/discovery.test.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@fontsource/martian-mono": "^5.2.7"
   }
 }
