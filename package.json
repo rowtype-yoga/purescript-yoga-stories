@@ -6,7 +6,9 @@
     "test": "spago test",
     "test:js": "bunx vitest run cli/discovery.test.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.8"
+  },
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
