@@ -141,7 +141,7 @@ sourceBlock = css
 
 sourceCode :: CSS
 sourceCode = css
-  { fontFamily: "ui-monospace, monospace"
+  { fontFamily: "'JetBrains Mono', ui-monospace, monospace"
   , fontSize: "14px"
   , lineHeight: "1.6"
   , color: "#cbd5e1"
