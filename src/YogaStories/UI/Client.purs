@@ -3,6 +3,7 @@ module YogaStories.UI.Client where
 import Prelude hiding (div)
 
 import Data.Array as Array
+import Data.Nullable (toMaybe)
 import Data.Array (find)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple.Nested ((/\))
@@ -201,8 +202,18 @@ storyView = component "StoryView" \props -> React.do
 -- Source code collapsible
 sourceView :: Maybe StoryModule -> JSX
 sourceView Nothing = mempty
-sourceView (Just info) =
-  details { style: S.sourceToggle }
-    [ summary { style: S.sourceSummary } (text ("Source: " <> info.sourcePath))
-    , element codeViewerComponent { code: info.sourceCode }
+sourceView (Just info) = do
+  let label = String.stripSuffix (String.Pattern ".Stories") info.moduleName # fromMaybe info.moduleName
+  R.div_
+    [ case toMaybe info.componentSourceCode of
+        Nothing -> mempty
+        Just code ->
+          details { style: S.sourceToggle }
+            [ summary { style: S.sourceSummary } (text ("Component: " <> label))
+            , element codeViewerComponent { code }
+            ]
+    , details { style: S.sourceToggle }
+        [ summary { style: S.sourceSummary } (text ("Story: " <> info.sourcePath))
+        , element codeViewerComponent { code: info.sourceCode }
+        ]
     ]

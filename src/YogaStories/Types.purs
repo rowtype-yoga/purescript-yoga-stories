@@ -1,5 +1,7 @@
 module YogaStories.Types where
 
+import Data.Nullable (Nullable)
+
 type Config =
   { outputDir :: String
   , include :: Array String
@@ -11,6 +13,7 @@ type StoryModule =
   , sourcePath :: String
   , exports :: Array String
   , sourceCode :: String
+  , componentSourceCode :: Nullable String
   }
 
 type CoreFnJson =

@@ -43,6 +43,19 @@ export async function listOutputModules(outputDir) {
   return results
 }
 
+async function readComponentSource(config, moduleName) {
+  const componentModule = moduleName.replace(/\.Stories$/, '')
+  if (componentModule === moduleName) return null
+  const componentDir = componentModule.replace(/\./g, '.')
+  try {
+    const corefnPath = join(config.outputDir, componentDir, 'corefn.json')
+    const corefn = JSON.parse(await readFile(corefnPath, 'utf-8'))
+    return await readFile(corefn.modulePath, 'utf-8')
+  } catch {
+    return null
+  }
+}
+
 export async function discoverStories(config) {
   const allModules = await listOutputModules(config.outputDir)
   const matched = filterModules(config, allModules)
@@ -54,7 +67,8 @@ export async function discoverStories(config) {
       const moduleName = corefn.moduleName.join('.')
       const sourcePath = corefn.modulePath
       const sourceCode = await readFile(sourcePath, 'utf-8')
-      stories.push({ moduleName, sourcePath, exports: corefn.exports, sourceCode })
+      const componentSourceCode = await readComponentSource(config, moduleName)
+      stories.push({ moduleName, sourcePath, exports: corefn.exports, sourceCode, componentSourceCode })
     } catch {
       // skip modules with missing/broken corefn.json
     }
