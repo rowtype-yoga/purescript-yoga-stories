@@ -37,9 +37,17 @@ foreign import getElementByIdImpl :: String -> Effect Element
 foreign import onModuleUpdateImpl :: (String -> Effect Unit) -> Effect Unit
 foreign import onStoriesUpdateImpl :: Effect Unit -> Effect Unit
 foreign import codeViewerComponent :: React.ReactComponent { code :: String }
+foreign import detailsElImpl :: forall a. Boolean -> Array JSX -> JSX
+foreign import summaryElImpl :: forall a. JSX -> JSX
 
 unsafeGetProperty :: String -> Foreign -> Effect JSX
 unsafeGetProperty = runEffectFn2 unsafeGetPropertyImpl
+
+detailsEl :: Boolean -> Array JSX -> JSX
+detailsEl = detailsElImpl
+
+summaryEl :: JSX -> JSX
+summaryEl = summaryElImpl
 
 -- Entry point (called from browser)
 clientMain :: Effect Unit
@@ -103,7 +111,7 @@ sidebar = component "Sidebar" \props -> React.do
                   }
               }
           ]
-      , div { style: S.sidebarContent, className: "ys-sidebar-scroll" }
+      , div { style: S.sidebarContent }
           [ div {} (map (moduleGroup props) filtered)
           ]
       , div { style: S.sidebarBranding } (text "yoga-stories")
@@ -111,8 +119,9 @@ sidebar = component "Sidebar" \props -> React.do
   where
   moduleGroup props s = do
     let label = String.stripSuffix (String.Pattern ".Stories") s.moduleName # fromMaybe s.moduleName
-    div {}
-      [ div { style: S.moduleLabel } (text label)
+    let isOpen = props.selected.moduleName == Just s.moduleName
+    detailsEl isOpen
+      [ summaryEl (text label)
       , div {} (map (exportBtn props s.moduleName) s.exports)
       ]
 
@@ -153,7 +162,8 @@ mainPanel = component "MainPanel" \props -> React.do
 
   pure case props.selected.moduleName, props.selected.exportName of
     Just modName, Just expName -> do
-      let key = modName <> "." <> expName
+      let label = String.stripSuffix (String.Pattern ".Stories") modName # fromMaybe modName
+      let key = label <> " / " <> expName
       let info = find (\s -> s.moduleName == modName) props.stories
       case loaded of
         Nothing ->

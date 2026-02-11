@@ -27,3 +27,15 @@ export function onStoriesUpdateImpl(callback) {
 }
 
 export const codeViewerComponent = window.__yogaStoriesCodeViewer || "pre";
+
+import React from "react";
+
+export function detailsElImpl(isOpen) {
+  return function(children) {
+    return React.createElement("details", { open: isOpen || undefined, className: "ys-module-group" }, ...children);
+  };
+}
+
+export function summaryElImpl(child) {
+  return React.createElement("summary", { className: "ys-module-label" }, child);
+}
