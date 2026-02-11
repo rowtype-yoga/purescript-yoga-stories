@@ -6,6 +6,13 @@ import Examples.Button (Variant(..), mkButton)
 import YogaStories.Controls (enum)
 import YogaStories.Story (story)
 
+story :: JSX
+story = story "story" mkButton
+  { label: "Button"
+  , variant: enum Primary
+  , subtitle: Just "A simple button"
+  }
+
 primary :: JSX
 primary = story "primary" mkButton
   { label: "Submit"

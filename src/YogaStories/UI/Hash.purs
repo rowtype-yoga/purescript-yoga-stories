@@ -71,7 +71,10 @@ useHashRoute = React.do
     w <- window
     loc <- Window.location w
     h <- Location.hash loc
-    setSel (parseHash h)
+    let parsed = parseHash h
+    let isNoSelection = parsed.moduleName == Nothing && parsed.exportName == Nothing
+    let defaultSel = if isNoSelection then { moduleName: Just "Examples.Button.Stories", exportName: Just "story" } else parsed
+    setSel defaultSel
     listener <- eventListener \_ -> do
       h' <- Location.hash loc
       setSel (parseHash h')
