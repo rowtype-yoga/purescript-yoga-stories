@@ -10,7 +10,7 @@ root = css
   { minHeight: "100vh"
   , display: "flex"
   , flexDirection: "column"
-  , fontFamily: "system-ui, -apple-system, sans-serif"
+  , fontFamily: "'Martian Mono', ui-monospace, monospace"
   , backgroundColor: "#0f172a"
   , color: "#e2e8f0"
   , margin: "0"
