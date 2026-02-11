@@ -10,7 +10,7 @@ root = css
   { minHeight: "100vh"
   , display: "flex"
   , flexDirection: "column"
-  , fontFamily: "'Martian Mono', ui-monospace, monospace"
+  , fontFamily: "system-ui, -apple-system, sans-serif"
   , backgroundColor: "#0f172a"
   , color: "#e2e8f0"
   , margin: "0"
@@ -141,7 +141,7 @@ sourceBlock = css
 
 sourceCode :: CSS
 sourceCode = css
-  { fontFamily: "'Martian Mono', ui-monospace, monospace"
+  { fontFamily: "system-ui, -apple-system, sans-serif"
   , fontSize: "14px"
   , lineHeight: "1.6"
   , color: "#cbd5e1"

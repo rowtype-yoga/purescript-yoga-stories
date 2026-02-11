@@ -15,6 +15,6 @@
   },
   "type": "module",
   "dependencies": {
-    "@fontsource/martian-mono": "^5.2.7"
+    "@fontsource/jetbrains-mono": "^5.2.8"
   }
 }

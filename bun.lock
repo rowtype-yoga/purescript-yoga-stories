@@ -4,7 +4,7 @@
     "": {
       "name": "purescript-yoga-stories",
       "dependencies": {
-        "@fontsource/martian-mono": "^5.2.7",
+        "@fontsource/jetbrains-mono": "^5.2.8",
       },
       "devDependencies": {
         "react": "19",
@@ -17,7 +17,7 @@
     },
   },
   "packages": {
-    "@fontsource/martian-mono": ["@fontsource/martian-mono@5.2.7", "", {}, "sha512-DU0WVmso0FjwnNf7Z80FhnrF/pCMgNi9ZfHTn1Ws7TM6u00CwV6esjaFkn3blnchn0pRwt63/M/2vfBe6J4mFg=="],
+    "@fontsource/jetbrains-mono": ["@fontsource/jetbrains-mono@5.2.8", "", {}, "sha512-6w8/SG4kqvIMu7xd7wt6x3idn1Qux3p9N62s6G3rfldOUYHpWcc2FKrqf+Vo44jRvqWj2oAtTHrZXEP23oSKwQ=="],
 
     "react": ["react@19.2.4", "", {}, "sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ=="],
 
