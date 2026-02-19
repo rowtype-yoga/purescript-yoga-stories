@@ -138,11 +138,19 @@ sidebar = component "Sidebar" \props -> React.do
   where
   moduleGroup props s = do
     let label = String.stripSuffix (String.Pattern ".Stories") s.moduleName # fromMaybe s.moduleName
-    let isOpen = props.selected.moduleName == Just s.moduleName
-    detailsEl isOpen
-      [ summaryEl (text label)
-      , div {} (map (exportBtn props s.moduleName) s.exports)
-      ]
+    let isSelected = props.selected.moduleName == Just s.moduleName
+    case s.exports of
+      [ "default" ] ->
+        button
+          { style: S.exportButton isSelected
+          , onClick: handler_ (props.onSelect s.moduleName "default")
+          }
+          (text label)
+      _ ->
+        detailsEl isSelected
+          [ summaryEl (text label)
+          , div {} (map (exportBtn props s.moduleName) s.exports)
+          ]
 
   exportBtn props modName expName = do
     let isSelected = props.selected.moduleName == Just modName && props.selected.exportName == Just expName
