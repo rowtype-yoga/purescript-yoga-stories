@@ -72,13 +72,31 @@ app = component "App" \initialStories -> React.do
         liftEffect $ setStories fresh
     pure mempty
 
+  let selected = autoSelect stories sel
+
   pure $
     div { style: S.root }
       [ div { style: S.row }
-          [ sidebar { stories, selected: sel, onSelect }
-          , mainPanel { selected: sel, stories }
+          [ sidebar { stories, selected, onSelect }
+          , mainPanel { selected, stories }
           ]
       ]
+
+-- When no story is selected, pick the first available story
+autoSelect :: Array StoryModule -> Selection -> Selection
+autoSelect stories sel = case sel.moduleName, sel.exportName of
+  Nothing, Nothing -> firstStory stories
+  Just modName, Nothing -> case find (\s -> s.moduleName == modName) stories of
+    Just s -> { moduleName: Just modName, exportName: preferDefault s.exports }
+    Nothing -> firstStory stories
+  _, _ -> sel
+  where
+  firstStory ss = case Array.head ss of
+    Just s -> { moduleName: Just s.moduleName, exportName: preferDefault s.exports }
+    Nothing -> sel
+  preferDefault exports = case find (_ == "default") exports of
+    Just d -> Just d
+    Nothing -> Array.head exports
 
 -- Sidebar
 sidebar :: { stories :: Array StoryModule, selected :: Selection, onSelect :: String -> String -> Effect Unit } -> JSX
@@ -164,7 +182,7 @@ mainPanel = component "MainPanel" \props -> React.do
   pure case props.selected.moduleName, props.selected.exportName of
     Just modName, Just expName -> do
       let label = String.stripSuffix (String.Pattern ".Stories") modName # fromMaybe modName
-      let key = label <> " / " <> expName
+      let key = if expName == "default" then label else label <> " / " <> expName
       let info = find (\s -> s.moduleName == modName) props.stories
       case loaded of
         Nothing ->
