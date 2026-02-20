@@ -3,7 +3,7 @@ export function dynamicImportImpl(path) {
 }
 
 export function fetchStoryDataImpl() {
-  return fetch("/stories.json").then((r) => r.json());
+  return fetch("stories.json").then((r) => r.json());
 }
 
 export function unsafeGetPropertyImpl(key, obj) {

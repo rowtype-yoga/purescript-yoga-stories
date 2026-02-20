@@ -1,5 +1,6 @@
 import "@fontsource/jetbrains-mono";
 import "./code-viewer.js";
+import "virtual:yoga-stories-head";
 
 if (!window.__yogaStoriesInitialised) {
   window.__yogaStoriesInitialised = true;

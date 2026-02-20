@@ -2,6 +2,9 @@ import { resolve } from "node:path";
 import { readFile, access } from "node:fs/promises";
 import { discoverStories } from "./discovery.js";
 
+const VIRTUAL_HEAD_ID = "virtual:yoga-stories-head";
+const RESOLVED_HEAD_ID = "\0" + VIRTUAL_HEAD_ID;
+
 export function yogaStoriesPlugin(config) {
   let cachedStories = null;
   let outputDir;
@@ -9,6 +12,23 @@ export function yogaStoriesPlugin(config) {
 
   return {
     name: "yoga-stories",
+
+    resolveId(id) {
+      if (id === VIRTUAL_HEAD_ID) return RESOLVED_HEAD_ID;
+    },
+
+    async load(id) {
+      if (id === RESOLVED_HEAD_ID) {
+        const userDir = process.cwd();
+        const headJsPath = resolve(userDir, "yoga-stories-head.js");
+        try {
+          await access(headJsPath);
+          return `import "/user/yoga-stories-head.js";`;
+        } catch {
+          return "";
+        }
+      }
+    },
 
     configureServer(server) {
       outputDir = resolve(process.cwd(), config.outputDir);
@@ -107,16 +127,6 @@ export function yogaStoriesPlugin(config) {
       try {
         const headContent = await readFile(headHtmlPath, "utf-8");
         result = result.replace("</head>", headContent + "\n</head>");
-      } catch {}
-
-      // Inject yoga-stories-head.js as a module script if it exists
-      const headJsPath = resolve(userDir, "yoga-stories-head.js");
-      try {
-        await access(headJsPath);
-        result = result.replace(
-          "</head>",
-          `<script type="module" src="/user/yoga-stories-head.js"></script>\n</head>`,
-        );
       } catch {}
 
       return result;
