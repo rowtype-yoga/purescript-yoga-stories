@@ -45,9 +45,13 @@ jobs:
 
       - run: npm install -g purs-backend-es@${{ inputs.purs-backend-es-version }}
 
-      - run: rm -f bun.lock && npm install
-
-      - run: ls -la node_modules/vite/dist/node/chunks/ || echo "chunks dir missing"
+      - name: Install dependencies
+        run: |
+          rm -f bun.lock
+          npm install
+          npm ls vite
+          cat node_modules/vite/package.json | node -e "process.stdin.setEncoding('utf8');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log('vite version:',JSON.parse(d).version))"
+          ls -la node_modules/vite/dist/node/chunks/
 
       - run: spago build
 
