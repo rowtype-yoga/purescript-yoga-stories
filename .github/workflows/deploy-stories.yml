@@ -49,9 +49,7 @@ jobs:
         run: |
           rm -f bun.lock
           npm install
-          npm ls vite
-          cat node_modules/vite/package.json | node -e "process.stdin.setEncoding('utf8');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log('vite version:',JSON.parse(d).version))"
-          ls -la node_modules/vite/dist/node/chunks/
+          test -f node_modules/vite/dist/node/chunks/config.js || npm install vite@7.3.1
 
       - run: spago build
 
