@@ -46,7 +46,8 @@ jobs:
         with:
           purescript: ${{ inputs.purs-version }}
           spago: ${{ inputs.spago-version }}
-          purs-backend-es: ${{ inputs.purs-backend-es-version }}
+
+      - run: npm install -g purs-backend-es@${{ inputs.purs-backend-es-version }}
 
       - run: npm install
 
