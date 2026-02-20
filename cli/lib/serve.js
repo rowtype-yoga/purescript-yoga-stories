@@ -26,6 +26,7 @@ export async function startDevServer({
 
   const server = await createServer({
     root: appDir,
+    cacheDir: resolve(userDir, "node_modules/.vite"),
     server: {
       port,
       open,
