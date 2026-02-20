@@ -38,7 +38,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - uses: purescript-contrib/setup-purescript@main
         with:
@@ -46,7 +48,7 @@ jobs:
           spago: ${{ inputs.spago-version }}
           purs-backend-es: ${{ inputs.purs-backend-es-version }}
 
-      - run: bun install
+      - run: npm install
 
       - run: spago build
 
