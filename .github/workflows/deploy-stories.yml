@@ -1,0 +1,62 @@
+name: Deploy Stories to GitHub Pages
+
+on:
+  workflow_call:
+    inputs:
+      purs-version:
+        description: PureScript compiler version
+        type: string
+        default: "0.15.15"
+      spago-version:
+        description: Spago version
+        type: string
+        default: "0.93.42"
+      purs-backend-es-version:
+        description: purs-backend-es version
+        type: string
+        default: "1.4.2"
+      build-args:
+        description: Extra arguments passed to yoga-stories build
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: purescript-contrib/setup-purescript@main
+        with:
+          purescript: ${{ inputs.purs-version }}
+          spago: ${{ inputs.spago-version }}
+          purs-backend-es: ${{ inputs.purs-backend-es-version }}
+
+      - run: bun install
+
+      - run: spago build
+
+      - run: bunx yoga-stories build ${{ inputs.build-args }}
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - uses: actions/deploy-pages@v4
+        id: deployment
