@@ -199,21 +199,21 @@ instance RenderControl Boolean Boolean where
 
 instance RenderControl Slider Number where
   renderControl (Slider s) lbl val setter = controlRow lbl
-    [ el "div" { style: { display: "flex", alignItems: "center", gap: "8px", flex: "1" } }
+    [ el "div" { style: { display: "flex", alignItems: "center", gap: "8px", flex: "1", minWidth: "0" } }
         [ inputImpl
             { type: "range"
             , min: show s.min
             , max: show s.max
             , step: show s.step
             , value: show val
-            , style: { flex: "1", accentColor: "#6366f1" }
+            , style: { flex: "1", minWidth: "0", accentColor: "#6366f1" }
             , onChange: handler targetValue \v -> case v of
                 Just str -> do
                   let n = parseFloat_ str
                   when (n == n) (setter n)
                 Nothing -> pure unit
             }
-        , el "span" { style: { fontSize: "11px", color: "#94a3b8", width: "48px", textAlign: "right" } } [ txt (show val) ]
+        , el "span" { style: { fontSize: "11px", color: "#94a3b8", width: "48px", flexShrink: "0", textAlign: "right" } } [ txt (show val) ]
         ]
     ]
 
@@ -642,7 +642,7 @@ controlRow lbl children =
   el "label"
     { style: { display: "flex", alignItems: "center", gap: "12px" } }
     [ el "span" { style: { color: "#94a3b8", width: "96px", flexShrink: "0" } } [ txt lbl ]
-    , el "div" { style: { display: "flex", alignItems: "center", flex: "1" } } children
+    , el "div" { style: { display: "flex", alignItems: "center", flex: "1", minWidth: "0" } } children
     ]
 
 controlGroup :: String -> Array JSX -> JSX
