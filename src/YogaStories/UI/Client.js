@@ -1,5 +1,14 @@
 export function dynamicImportImpl(path) {
-  return () => import(/* @vite-ignore */ path + "?t=" + Date.now());
+  return () => {
+    const registry = window.__yogaStoriesModuleRegistry;
+    if (registry) {
+      const match = path.match(/\/output\/([^/]+)\/index\.js/);
+      if (match && registry[match[1]]) {
+        return Promise.resolve(registry[match[1]]);
+      }
+    }
+    return import(/* @vite-ignore */ path + "?t=" + Date.now());
+  };
 }
 
 export function fetchStoryDataImpl() {

@@ -5,6 +5,9 @@ import { discoverStories } from "./discovery.js";
 const VIRTUAL_HEAD_ID = "virtual:yoga-stories-head";
 const RESOLVED_HEAD_ID = "\0" + VIRTUAL_HEAD_ID;
 
+const VIRTUAL_MODULES_ID = "virtual:yoga-stories-modules";
+const RESOLVED_MODULES_ID = "\0" + VIRTUAL_MODULES_ID;
+
 export function yogaStoriesPlugin(config) {
   let cachedStories = null;
   let outputDir;
@@ -15,6 +18,7 @@ export function yogaStoriesPlugin(config) {
 
     resolveId(id) {
       if (id === VIRTUAL_HEAD_ID) return RESOLVED_HEAD_ID;
+      if (id === VIRTUAL_MODULES_ID) return RESOLVED_MODULES_ID;
     },
 
     async load(id) {
@@ -27,6 +31,21 @@ export function yogaStoriesPlugin(config) {
         } catch {
           return "";
         }
+      }
+
+      if (id === RESOLVED_MODULES_ID) {
+        if (this.meta.watchMode) {
+          return "export default {};";
+        }
+        const stories = config.stories || cachedStories || (await discoverStories(config));
+        cachedStories = stories;
+        const imports = stories.map(
+          (s, i) => `import * as m${i} from "/output/${s.moduleName}/index.js";`,
+        );
+        const entries = stories.map(
+          (s, i) => `  ${JSON.stringify(s.moduleName)}: m${i}`,
+        );
+        return [...imports, `export default {`, ...entries.map((e, i) => e + (i < entries.length - 1 ? "," : "")), `};`].join("\n");
       }
     },
 

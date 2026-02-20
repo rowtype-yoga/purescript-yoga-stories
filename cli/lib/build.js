@@ -4,7 +4,6 @@ import { loadConfig, discoverStories } from "./discovery.js";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
-import { cp } from "node:fs/promises";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -35,7 +34,7 @@ export async function buildProduction({
   const stories = await discoverStories(config);
   console.log(`Found ${stories.length} story modules`);
 
-  const buildConfig = { ...config, outputDir: esOutputDir };
+  const buildConfig = { ...config, outputDir: esOutputDir, stories };
   const userConfig = await loadUserConfig(userDir);
 
   console.log("Building with Vite...");
@@ -62,10 +61,6 @@ export async function buildProduction({
       dedupe: ["react", "react-dom"],
     },
   });
-
-  const distDir = resolve(userDir, outDir);
-  console.log("Copying optimized modules...");
-  await cp(esOutputDir, resolve(distDir, "output"), { recursive: true });
 
   console.log(`Built to ${outDir}/`);
 }

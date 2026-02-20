@@ -1,6 +1,11 @@
 import "@fontsource/jetbrains-mono";
 import "./code-viewer.js";
 import "virtual:yoga-stories-head";
+import moduleRegistry from "virtual:yoga-stories-modules";
+
+if (Object.keys(moduleRegistry).length > 0) {
+  window.__yogaStoriesModuleRegistry = moduleRegistry;
+}
 
 if (!window.__yogaStoriesInitialised) {
   window.__yogaStoriesInitialised = true;
