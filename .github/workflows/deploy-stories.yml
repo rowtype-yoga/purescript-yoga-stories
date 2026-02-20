@@ -51,7 +51,7 @@ jobs:
 
       - run: spago build
 
-      - run: bun run yoga-stories build ${{ inputs.build-args }}
+      - run: bun --bun run yoga-stories build ${{ inputs.build-args }}
 
       - uses: actions/configure-pages@v5
 
