@@ -38,8 +38,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
-
       - uses: purescript-contrib/setup-purescript@main
         with:
           purescript: ${{ inputs.purs-version }}
@@ -47,11 +45,13 @@ jobs:
 
       - run: npm install -g purs-backend-es@${{ inputs.purs-backend-es-version }}
 
-      - run: bun install
+      - run: rm -f bun.lock && npm install
+
+      - run: ls -la node_modules/vite/dist/node/chunks/ || echo "chunks dir missing"
 
       - run: spago build
 
-      - run: bun --bun run yoga-stories build ${{ inputs.build-args }}
+      - run: npx yoga-stories build ${{ inputs.build-args }}
 
       - uses: actions/configure-pages@v5
 
