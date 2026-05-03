@@ -38,8 +38,8 @@ foreign import getElementByIdImpl :: String -> Effect Element
 foreign import onModuleUpdateImpl :: (String -> Effect Unit) -> Effect Unit
 foreign import onStoriesUpdateImpl :: Effect Unit -> Effect Unit
 foreign import codeViewerComponent :: React.ReactComponent { code :: String }
-foreign import detailsElImpl :: forall a. Boolean -> Array JSX -> JSX
-foreign import summaryElImpl :: forall a. JSX -> JSX
+foreign import detailsElImpl :: Boolean -> Array JSX -> JSX
+foreign import summaryElImpl :: JSX -> JSX
 
 unsafeGetProperty :: String -> Foreign -> Effect JSX
 unsafeGetProperty = runEffectFn2 unsafeGetPropertyImpl
