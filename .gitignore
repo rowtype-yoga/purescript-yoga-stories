@@ -12,3 +12,5 @@ generated-docs/
 .spago
 dist/
 static/vendor/
+
+.playwright-mcp/

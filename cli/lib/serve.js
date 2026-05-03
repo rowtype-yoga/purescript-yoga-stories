@@ -15,6 +15,7 @@ export async function startDevServer({
   const fileConfig = await loadConfig(configPath);
   const config = {
     outputDir: outputDir || fileConfig.outputDir || "./output",
+    sourcesRoot: fileConfig.sourcesRoot || ".",
     include: fileConfig.include || ["**.Stories"],
     exclude: fileConfig.exclude || [],
   };

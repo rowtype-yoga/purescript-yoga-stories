@@ -1,5 +1,14 @@
 import { readdir, readFile, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, resolve, isAbsolute } from 'node:path'
+
+// `corefn.modulePath` is written by spago/purs-ide as a path relative to
+// the *workspace root* (where the compiler was invoked).  When yoga-stories
+// runs from a sub-directory (e.g. `npm/`) it would otherwise try to read
+// the path relative to `process.cwd()` and fail.  `sourcesRoot` (config
+// option, default `.`) is prepended before reading.  Absolute paths in
+// modulePath are passed through unchanged.
+const resolveSource = (config, modulePath) =>
+  isAbsolute(modulePath) ? modulePath : resolve(config.sourcesRoot ?? '.', modulePath)
 
 /**
  * Match a dot-separated module name against a dot-separated glob pattern.
@@ -50,7 +59,7 @@ async function readComponentSource(config, moduleName) {
   try {
     const corefnPath = join(config.outputDir, componentDir, 'corefn.json')
     const corefn = JSON.parse(await readFile(corefnPath, 'utf-8'))
-    return await readFile(corefn.modulePath, 'utf-8')
+    return await readFile(resolveSource(config, corefn.modulePath), 'utf-8')
   } catch {
     return null
   }
@@ -65,7 +74,7 @@ export async function discoverStories(config) {
       const corefnPath = join(config.outputDir, mod, 'corefn.json')
       const corefn = JSON.parse(await readFile(corefnPath, 'utf-8'))
       const moduleName = corefn.moduleName.join('.')
-      const sourcePath = corefn.modulePath
+      const sourcePath = resolveSource(config, corefn.modulePath)
       const sourceCode = await readFile(sourcePath, 'utf-8')
       const componentSourceCode = await readComponentSource(config, moduleName)
       stories.push({ moduleName, sourcePath, exports: corefn.exports, sourceCode, componentSourceCode })
@@ -80,6 +89,6 @@ export async function loadConfig(configPath) {
   try {
     return JSON.parse(await readFile(configPath, 'utf-8'))
   } catch {
-    return { outputDir: './output', include: ['**.Stories'], exclude: [] }
+    return { outputDir: './output', sourcesRoot: '.', include: ['**.Stories'], exclude: [] }
   }
 }
