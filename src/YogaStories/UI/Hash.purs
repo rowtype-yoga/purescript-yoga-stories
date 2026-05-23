@@ -89,6 +89,7 @@ useHashRoute = React.do
       let base = toHash { moduleName: Just modName, exportName: Just expName }
       let full = base <> maybe "" ("?" <> _) query
       Location.setHash full loc
+      setSel { moduleName: Just modName, exportName: Just expName }
   pure (sel /\ onSelect)
 
 readHashProps :: Effect (Maybe String)
