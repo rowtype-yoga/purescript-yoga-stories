@@ -1,0 +1,50 @@
+name: Publish CLI to npm
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Ensure npm supports trusted publishing
+        run: npm install -g npm@latest
+
+      - uses: purescript-contrib/setup-purescript@main
+        with:
+          purescript: "0.15.15"
+          spago: "0.93.42"
+
+      - run: npm install -g purs-backend-es@1.4.2
+
+      - name: Verify tag matches cli/package.json version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg=$(node -p "require('./cli/package.json').version")
+          if [ "$tag" != "$pkg" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match cli/package.json version $pkg" >&2
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: |
+          rm -f bun.lock
+          npm install
+          cd cli && npm install
+
+      - name: Publish
+        working-directory: cli
+        run: npm publish --provenance --access public
