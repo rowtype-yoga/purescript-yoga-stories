@@ -44,7 +44,7 @@ export async function startDevServer({
         "react-dom": resolve(userDir, "node_modules/react-dom"),
         ...userConfig.alias,
       },
-      dedupe: ["react", "react-dom"],
+      dedupe: ["react", "react-dom", "@codemirror/state"],
     },
     optimizeDeps: {
       include: ["react", "react-dom", "react-dom/client"],

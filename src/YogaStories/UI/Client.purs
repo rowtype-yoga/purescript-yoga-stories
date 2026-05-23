@@ -21,6 +21,7 @@ import React.Basic.DOM.Client (createRoot, renderRoot)
 import React.Basic.DOM.Events (targetValue)
 import React.Basic.Events (handler, handler_)
 import React.Basic.Hooks as React
+import React.Basic.Hooks (keyed)
 import React.Basic.Hooks.Internal (unsafeRenderEffect)
 import Web.DOM (Element)
 import Yoga.React (component)
@@ -212,7 +213,7 @@ mainPanel = component "MainPanel" \props -> React.do
                         (text toggleLabel)
                     ]
                 ]
-            , storyView { mod: l.mod, exportName: expName, layoutClass, stageClass }
+            , keyed (modName <> "/" <> expName) (storyView { mod: l.mod, exportName: expName, layoutClass, stageClass })
             , sourceView info
             ]
     _, _ ->
