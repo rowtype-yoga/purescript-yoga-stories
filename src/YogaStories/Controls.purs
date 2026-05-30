@@ -19,6 +19,7 @@ module YogaStories.Controls
   , valuesToParams
   , paramsToValues
   , controlsPanel
+  , orderControls
   , class GenericToString
   , genericToString
   , class GenericFromString
@@ -28,7 +29,10 @@ module YogaStories.Controls
 
 import Prelude
 
+import Data.Array (elem, filter, find, mapMaybe)
 import Data.Generic.Rep (class Generic, Constructor(..), NoArguments(..), Sum(Inl, Inr), from, to)
+import Data.Tuple (snd)
+import Data.Tuple.Nested (type (/\), (/\))
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Data.Maybe (Maybe(..))
@@ -338,7 +342,7 @@ instance
   ) =>
   RenderControl (Record schema) (Record values) where
   renderControl schema lbl values setter = controlGroup lbl
-    (renderControls (Proxy :: Proxy rl) schema values setter)
+    (map snd (renderControls (Proxy :: Proxy rl) schema values setter))
 
 instance RenderControl (Maybe Boolean) (Maybe Boolean) where
   renderControl _ lbl val setter = controlRow lbl
@@ -372,7 +376,7 @@ class RenderControls rl schemaRow valuesRow | rl -> schemaRow valuesRow where
     -> Record schemaRow
     -> Record valuesRow
     -> (Record valuesRow -> Effect Unit)
-    -> Array JSX
+    -> Array (String /\ JSX)
 
 instance RenderControls Nil schemaRow valuesRow where
   renderControls _ _ _ _ = []
@@ -385,10 +389,11 @@ instance
   , Row.Cons name valueType whatever2 valuesRow
   ) =>
   RenderControls (Cons name schemaType tail) schemaRow valuesRow where
-  renderControls _ schema values setValues = [ thisControl ] <> restControls
+  renderControls _ schema values setValues = [ fieldName /\ thisControl ] <> restControls
     where
     nameP = Proxy :: Proxy name
-    thisControl = renderControl (get nameP schema) (reflectSymbol nameP) (get nameP values) \newVal ->
+    fieldName = reflectSymbol nameP
+    thisControl = renderControl (get nameP schema) fieldName (get nameP values) \newVal ->
       setValues (set nameP newVal values)
     restControls = renderControls (Proxy :: Proxy tail) schema values setValues
 
@@ -617,6 +622,16 @@ paramsToValues
 paramsToValues schema params defaults = fromParams (Proxy :: Proxy rl) schema params defaults
 
 -- Layout helpers (all inline styles, no CSS classes)
+
+-- | Reorder labelled controls by an explicit list of field names. Fields named
+-- | in `order` lead, in the given order; any field not mentioned trails in its
+-- | original (alphabetical RowList) position. An empty list leaves the
+-- | alphabetical default untouched.
+orderControls :: forall a. Array String -> Array (String /\ a) -> Array a
+orderControls order controls = map snd (leading <> trailing)
+  where
+  leading = mapMaybe (\name -> find (\(field /\ _) -> field == name) controls) order
+  trailing = filter (\(field /\ _) -> not (field `elem` order)) controls
 
 controlsPanel :: Array JSX -> JSX
 controlsPanel controls =

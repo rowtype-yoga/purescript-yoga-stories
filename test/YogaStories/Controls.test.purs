@@ -4,10 +4,11 @@ import Prelude
 
 import Data.Generic.Rep (class Generic)
 import Data.Maybe (Maybe(..))
+import Data.Tuple.Nested ((/\))
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 import React.Basic.DOM (text) as R
-import YogaStories.Controls (buildInitialValues, customControl, fromParam, initialValue, toParam, slider, select, color, enum)
+import YogaStories.Controls (buildInitialValues, customControl, fromParam, initialValue, orderControls, toParam, slider, select, color, enum)
 
 data Variant = A | B | C
 
@@ -110,3 +111,21 @@ spec = describe "Controls" do
       let values = buildInitialValues schema
       values.name `shouldEqual` "test"
       values.custom `shouldEqual` "default"
+
+  describe "orderControls" do
+    let alphabetical = [ "height" /\ "H", "playing" /\ "P", "renderer" /\ "R", "speed" /\ "S", "width" /\ "W" ]
+
+    it "leaves order untouched when the list is empty" do
+      orderControls [] alphabetical `shouldEqual` [ "H", "P", "R", "S", "W" ]
+
+    it "pins listed fields first in the given order" do
+      orderControls [ "renderer", "playing", "speed", "width", "height" ] alphabetical
+        `shouldEqual` [ "R", "P", "S", "W", "H" ]
+
+    it "trails unlisted fields in their alphabetical position" do
+      orderControls [ "renderer", "playing" ] alphabetical
+        `shouldEqual` [ "R", "P", "H", "S", "W" ]
+
+    it "ignores names that match no field" do
+      orderControls [ "renderer", "missing", "playing" ] alphabetical
+        `shouldEqual` [ "R", "P", "H", "S", "W" ]
