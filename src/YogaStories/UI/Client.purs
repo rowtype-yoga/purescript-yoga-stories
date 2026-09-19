@@ -77,8 +77,8 @@ app = component "App" \initialStories -> React.do
   let selected = autoSelect stories sel
 
   pure $
-    div { style: S.root }
-      [ div { style: S.row }
+    div { className: "ys-shell", style: S.root }
+      [ div { className: "ys-workspace", style: S.row }
           [ sidebar { stories, selected, onSelect }
           , mainPanel { selected, stories }
           ]
@@ -106,46 +106,48 @@ sidebar = component "Sidebar" \props -> React.do
   query /\ setQuery <- React.useState' ""
   let needle = String.toLower query
   let
+    storyCount = Array.foldl (\count storyModule -> count + Array.length storyModule.exports) 0 props.stories
     filtered = props.stories # Array.filter \s ->
       String.contains (String.Pattern needle) (String.toLower s.moduleName)
         || Array.any (String.contains (String.Pattern needle) <<< String.toLower) s.exports
   pure $
-    nav { style: S.sidebarNav }
-      [ div { style: S.searchBox }
+    nav { className: "ys-sidebar", style: S.sidebarNav }
+      [ div { style: S.brand }
+          [ div { style: S.brandMark } (text "YS")
+          , div {}
+              [ div { style: S.brandName } (text "Yoga Stories")
+              , div { style: S.brandMeta } (text (show storyCount <> " stories in this workspace"))
+              ]
+          ]
+      , div { style: S.searchBox }
           [ R.input
               { type: "text"
-              , placeholder: "Search..."
+              , placeholder: "Find a story…"
               , value: query
               , onChange: handler targetValue \v -> case v of
                   Just q -> setQuery q
                   _ -> pure unit
-              , style: R.css
-                  { width: "100%"
-                  , padding: "6px 10px"
-                  , fontSize: "13px"
-                  , border: "1px solid #334155"
-                  , borderRadius: "4px"
-                  , background: "#1e293b"
-                  , color: "#e2e8f0"
-                  , outline: "none"
-                  , fontFamily: "inherit"
-                  }
+              , className: "ys-search-input"
               }
           ]
       , div { style: S.sidebarContent }
-          [ div {} (map (moduleGroup props) filtered)
+          [ div { style: S.sidebarHeading } (text "Library")
+          , if Array.null filtered then
+              div { style: S.emptyState } (text "No stories match this search.")
+            else
+              div {} (map (moduleGroup props) filtered)
           ]
-      , div { style: S.sidebarBranding } (text "yoga-stories")
+      , div { style: S.sidebarBranding } (text "Local component workshop")
       ]
   where
   moduleGroup props s = do
-    let label = String.stripSuffix (String.Pattern ".Stories") s.moduleName # fromMaybe s.moduleName
+    let label = moduleDisplayName s.moduleName
     let isSelected = props.selected.moduleName == Just s.moduleName
     case s.exports of
-      [ "default" ] ->
+      [ expName ] | isPrimaryExport label expName ->
         button
           { style: S.exportButton isSelected
-          , onClick: handler_ (props.onSelect s.moduleName "default")
+          , onClick: handler_ (props.onSelect s.moduleName expName)
           }
           (text label)
       _ ->
@@ -161,6 +163,17 @@ sidebar = component "Sidebar" \props -> React.do
       , onClick: handler_ (props.onSelect modName expName)
       }
       (text expName)
+
+moduleDisplayName :: String -> String
+moduleDisplayName name =
+  let
+    withoutPrefix = fromMaybe name (String.stripPrefix (String.Pattern "Test.Stories.") name)
+  in
+    fromMaybe withoutPrefix (String.stripSuffix (String.Pattern ".Stories") withoutPrefix)
+
+isPrimaryExport :: String -> String -> Boolean
+isPrimaryExport label exportName =
+  exportName == "default" || String.toLower exportName == String.toLower label
 
 -- Main panel
 mainPanel :: { selected :: Selection, stories :: Array StoryModule } -> JSX
@@ -189,19 +202,22 @@ mainPanel = component "MainPanel" \props -> React.do
   layoutRight /\ setLayoutRight <- React.useState' true
   let layoutClass = if layoutRight then "ys-layout-right" else "ys-layout-bottom"
   let stageClass = if stageDark then "ys-stage-dark" else "ys-stage-light"
-  let stageLabel = if stageDark then "☀" else "☾"
-  let toggleLabel = if layoutRight then "↓" else "→"
+  let stageLabel = if stageDark then "Light stage" else "Dark stage"
+  let toggleLabel = if layoutRight then "Controls below" else "Controls right"
 
   pure case props.selected.moduleName, props.selected.exportName of
     Just modName, Just expName -> do
-      let label = String.stripSuffix (String.Pattern ".Stories") modName # fromMaybe modName
-      let key = if expName == "default" then label else label <> " / " <> expName
+      let label = moduleDisplayName modName
+      let key = if isPrimaryExport label expName then label else label <> " / " <> expName
       let info = find (\s -> s.moduleName == modName) props.stories
       case loaded of
         Just l | l.name == modName ->
-          div { style: S.panel }
-            [ div { style: S.storyHeader }
-                [ h3 { style: S.storyTitle } (text key)
+          div { className: "ys-main", style: S.panel }
+            [ div { className: "ys-story-header", style: S.storyHeader }
+                [ div {}
+                    [ div { style: S.storyEyebrow } (text "Story preview")
+                    , h3 { style: S.storyTitle } (text key)
+                    ]
                 , div { style: S.toolbarButtons }
                     [ button
                         { style: S.layoutToggle
@@ -219,32 +235,33 @@ mainPanel = component "MainPanel" \props -> React.do
             , sourceView info
             ]
         _ ->
-          div { style: S.panel <> S.muted } (text "Loading...")
+          div { className: "ys-main", style: S.loadingState } (text "Loading story…")
     _, _ ->
-      div { style: S.panelPlaceholder } (text "Select a story")
+      div { className: "ys-main", style: S.panelPlaceholder } (text "Choose a story from the library.")
 
 -- Renders a single story export
 storyView :: { mod :: Foreign, exportName :: String, layoutClass :: String, stageClass :: String } -> JSX
 storyView = component "StoryView" \props -> React.do
   jsx <- unsafeRenderEffect $ unsafeGetProperty props.exportName props.mod
   pure $
-    R.div { className: props.layoutClass <> " " <> props.stageClass, children: [ jsx ] }
+    R.div { className: "ys-story-frame " <> props.layoutClass <> " " <> props.stageClass, children: [ jsx ] }
 
 -- Source code collapsible
 sourceView :: Maybe StoryModule -> JSX
 sourceView Nothing = mempty
 sourceView (Just info) = do
-  let label = String.stripSuffix (String.Pattern ".Stories") info.moduleName # fromMaybe info.moduleName
-  R.div_
-    [ case toMaybe info.componentSourceCode of
+  let label = moduleDisplayName info.moduleName
+  div { style: S.sourceGroup }
+    [ div { style: S.storyEyebrow } (text "Source")
+    , case toMaybe info.componentSourceCode of
         Nothing -> mempty
         Just code ->
-          details { style: S.sourceToggle }
-            [ summary { style: S.sourceSummary } (text ("Component: " <> label))
+          details { className: "ys-source-card", style: S.sourceToggle }
+            [ summary { style: S.sourceSummary } (text ("Component source · " <> label))
             , div { style: S.sourceCode } [ element codeViewerComponent { code } ]
             ]
-    , details { style: S.sourceToggle }
-        [ summary { style: S.sourceSummary } (text ("Story: " <> info.sourcePath))
+    , details { className: "ys-source-card", style: S.sourceToggle }
+        [ summary { style: S.sourceSummary } (text ("Story source · " <> info.sourcePath))
         , div { style: S.sourceCode } [ element codeViewerComponent { code: info.sourceCode } ]
         ]
     ]

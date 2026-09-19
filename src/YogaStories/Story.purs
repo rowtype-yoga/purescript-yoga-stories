@@ -1,6 +1,7 @@
 module YogaStories.Story where
 
 import Prelude
+import Data.Array as Array
 
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple.Nested ((/\))
@@ -71,10 +72,14 @@ storyOrdered order name comp schema = storyRenderer { name, component: comp, sch
         setValues newValues
         writeHashProps (writeJSON (valuesToParams props.schema newValues))
     let controls = orderControls order (renderControls (Proxy :: Proxy rl) props.schema values updateValues)
-    pure $ R.div_
-      [ R.div { className: "ys-preview", children: [ props.component values ] }
-      , R.div { className: "ys-controls", children: [ controlsPanel controls ] }
-      ]
+    let hasControls = not (Array.null controls)
+    pure $ R.div
+      { className: if hasControls then "ys-story-content" else "ys-story-no-controls"
+      , children:
+          [ R.div { className: "ys-preview", children: [ props.component values ] } ]
+            <> if hasControls then [ R.div { className: "ys-controls", children: [ controlsPanel controls ] } ] else []
+      }
+
   onHashChange :: Effect Unit -> Effect (Effect Unit)
   onHashChange cb = do
     w <- window
