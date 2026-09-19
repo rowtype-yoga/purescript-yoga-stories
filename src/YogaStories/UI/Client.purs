@@ -8,6 +8,7 @@ import Data.Array (find)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
+import Effect.Ref as Ref
 import Effect.Aff (launchAff_)
 import Effect.Class (liftEffect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
@@ -177,10 +178,13 @@ mainPanel = component "MainPanel" \props -> React.do
     case props.selected.moduleName of
       Nothing -> pure mempty
       Just modName -> do
+        active <- Ref.new true
+        setLoaded (const Nothing)
         launchAff_ do
           mod <- toAffE (dynamicImportImpl ("/output/" <> modName <> "/index.js"))
-          liftEffect $ setLoaded \_ -> Just { name: modName, mod }
-        pure mempty
+          stillActive <- liftEffect (Ref.read active)
+          when stillActive $ liftEffect $ setLoaded \_ -> Just { name: modName, mod }
+        pure (Ref.write false active)
 
   layoutRight /\ setLayoutRight <- React.useState' true
   let layoutClass = if layoutRight then "ys-layout-right" else "ys-layout-bottom"
@@ -194,9 +198,7 @@ mainPanel = component "MainPanel" \props -> React.do
       let key = if expName == "default" then label else label <> " / " <> expName
       let info = find (\s -> s.moduleName == modName) props.stories
       case loaded of
-        Nothing ->
-          div { style: S.panel <> S.muted } (text "Loading...")
-        Just l ->
+        Just l | l.name == modName ->
           div { style: S.panel }
             [ div { style: S.storyHeader }
                 [ h3 { style: S.storyTitle } (text key)
@@ -216,6 +218,8 @@ mainPanel = component "MainPanel" \props -> React.do
             , keyed (modName <> "/" <> expName) (storyView { mod: l.mod, exportName: expName, layoutClass, stageClass })
             , sourceView info
             ]
+        _ ->
+          div { style: S.panel <> S.muted } (text "Loading...")
     _, _ ->
       div { style: S.panelPlaceholder } (text "Select a story")
 
