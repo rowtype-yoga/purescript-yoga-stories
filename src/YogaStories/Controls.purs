@@ -194,7 +194,7 @@ instance RenderControl Boolean Boolean where
     [ inputImpl
         { type: "checkbox"
         , checked: val
-        , style: { accentColor: "#6366f1" }
+        , style: { accentColor: "#737373" }
         , onChange: handler targetChecked \v -> case v of
             Just b -> setter b
             Nothing -> pure unit
@@ -203,21 +203,21 @@ instance RenderControl Boolean Boolean where
 
 instance RenderControl Slider Number where
   renderControl (Slider s) lbl val setter = controlRow lbl
-    [ el "div" { style: { display: "flex", alignItems: "center", gap: "8px", flex: "1", minWidth: "0" } }
+    [ el "div" { style: { display: "flex", alignItems: "center", gap: "6px", flex: "1", minWidth: "0" } }
         [ inputImpl
             { type: "range"
             , min: show s.min
             , max: show s.max
             , step: show s.step
             , value: show val
-            , style: { flex: "1", minWidth: "0", accentColor: "#6366f1" }
+            , style: { flex: "1", minWidth: "0", accentColor: "#737373" }
             , onChange: handler targetValue \v -> case v of
                 Just str -> do
                   let n = parseFloat_ str
                   when (n == n) (setter n)
                 Nothing -> pure unit
             }
-        , el "span" { style: { fontSize: "11px", color: "#94a3b8", width: "48px", flexShrink: "0", textAlign: "right" } } [ txt (show val) ]
+        , el "span" { style: { fontSize: "10px", color: "#8a8a8a", width: "42px", flexShrink: "0", textAlign: "right" } } [ txt (show val) ]
         ]
     ]
 
@@ -238,12 +238,12 @@ instance RenderControl Color String where
     [ inputImpl
         { type: "color"
         , value: val
-        , style: { width: "32px", height: "32px", borderRadius: "4px", border: "1px solid #475569", background: "transparent", cursor: "pointer", padding: "0" }
+        , style: { width: "24px", height: "24px", borderRadius: "3px", border: "1px solid #555555", background: "transparent", cursor: "pointer", padding: "0" }
         , onChange: handler targetValue \v -> case v of
             Just s -> setter s
             Nothing -> pure unit
         }
-    , el "span" { style: { fontSize: "11px", color: "#94a3b8", marginLeft: "8px" } } [ txt val ]
+    , el "span" { style: { fontSize: "10px", color: "#8a8a8a", marginLeft: "6px" } } [ txt val ]
     ]
 
 instance (Generic a rep, GenericToString rep, GenericFromString rep, EnumOptions a) => RenderControl (Enum a) a where
@@ -269,7 +269,7 @@ instance RenderControl (Maybe String) (Maybe String) where
     [ inputImpl
         { type: "checkbox"
         , checked: isJust val
-        , style: { accentColor: "#6366f1", marginRight: "8px" }
+        , style: { accentColor: "#737373", marginRight: "6px" }
         , onChange: handler targetChecked \v -> case v of
             Just true -> setter (Just "")
             _ -> setter Nothing
@@ -637,16 +637,16 @@ controlsPanel :: Array JSX -> JSX
 controlsPanel controls =
   el "div"
     { style:
-        { border: "1px solid #334155"
-        , borderRadius: "8px"
-        , background: "#1e293b"
-        , padding: "16px"
+        { border: "1px solid #3a3a3a"
+        , borderRadius: "4px"
+        , background: "#1b1b1b"
+        , padding: "8px"
         , display: "flex"
         , flexDirection: "column"
-        , gap: "12px"
-        , fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-        , fontSize: "13px"
-        , color: "#e2e8f0"
+        , gap: "8px"
+        , fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+        , fontSize: "12px"
+        , color: "#d4d4d4"
         , boxSizing: "border-box"
         }
     }
@@ -655,34 +655,34 @@ controlsPanel controls =
 controlRow :: String -> Array JSX -> JSX
 controlRow lbl children =
   el "label"
-    { style: { display: "flex", alignItems: "center", gap: "12px" } }
-    [ el "span" { style: { color: "#94a3b8", width: "96px", flexShrink: "0" } } [ txt lbl ]
+    { style: { display: "flex", alignItems: "center", gap: "8px" } }
+    [ el "span" { style: { color: "#999999", width: "80px", flexShrink: "0" } } [ txt lbl ]
     , el "div" { style: { display: "flex", alignItems: "center", flex: "1", minWidth: "0" } } children
     ]
 
 controlGroup :: String -> Array JSX -> JSX
 controlGroup lbl children =
   el "div"
-    { style: { display: "flex", flexDirection: "column", gap: "8px" } }
-    [ el "span" { style: { fontSize: "11px", fontWeight: "500", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" } } [ txt lbl ]
-    , el "div" { style: { paddingLeft: "16px", borderLeft: "1px solid #334155", display: "flex", flexDirection: "column", gap: "12px" } } children
+    { style: { display: "flex", flexDirection: "column", gap: "5px" } }
+    [ el "span" { style: { fontSize: "10px", fontWeight: "600", color: "#888888" } } [ txt lbl ]
+    , el "div" { style: { paddingLeft: "8px", borderLeft: "1px solid #3a3a3a", display: "flex", flexDirection: "column", gap: "8px" } } children
     ]
 
 inputStyle :: { width :: String, background :: String, border :: String, borderRadius :: String, padding :: String, fontSize :: String, color :: String, outline :: String, boxSizing :: String }
 inputStyle =
   { width: "100%"
-  , background: "#0f172a"
-  , border: "1px solid #475569"
-  , borderRadius: "4px"
-  , padding: "4px 8px"
-  , fontSize: "13px"
-  , color: "#e2e8f0"
+  , background: "#141414"
+  , border: "1px solid #484848"
+  , borderRadius: "3px"
+  , padding: "3px 6px"
+  , fontSize: "12px"
+  , color: "#d4d4d4"
   , outline: "none"
   , boxSizing: "border-box"
   }
 
 selectStyle :: { width :: String, background :: String, border :: String, borderRadius :: String, padding :: String, fontSize :: String, color :: String, outline :: String, boxSizing :: String }
-selectStyle = inputStyle { padding = "6px 32px 6px 8px" }
+selectStyle = inputStyle { padding = "4px 24px 4px 6px" }
 
 isJust :: forall a. Maybe a -> Boolean
 isJust (Just _) = true

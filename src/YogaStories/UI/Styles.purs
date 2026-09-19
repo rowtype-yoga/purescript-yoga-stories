@@ -4,7 +4,6 @@ import Prelude
 
 import Yoga.React.DOM.Internal (CSS, css)
 
--- Layout
 root :: CSS
 root = css
   { minHeight: "100svh"
@@ -12,10 +11,9 @@ root = css
   , display: "flex"
   , flexDirection: "column"
   , overflow: "hidden"
-  , fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, sans-serif"
-  , backgroundColor: "#070a12"
-  , backgroundImage: "radial-gradient(circle at 75% -10%, #172554 0%, transparent 34%), radial-gradient(circle at 5% 110%, #164e6338 0%, transparent 28%)"
-  , color: "#e5e7eb"
+  , fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+  , backgroundColor: "#151515"
+  , color: "#d4d4d4"
   , margin: "0"
   }
 
@@ -25,25 +23,20 @@ row = css { display: "flex", flex: "1", minHeight: "0", minWidth: "0" }
 center :: CSS
 center = css { display: "flex", alignItems: "center", justifyContent: "center" }
 
-flex1 :: CSS
-flex1 = css { flex: "1" }
-
--- Sidebar
 sidebarNav :: CSS
 sidebarNav = css
-  { width: "288px"
-  , borderRight: "1px solid #1f2937"
-  , backgroundColor: "#090e18f2"
+  { width: "240px"
+  , borderRight: "1px solid #303030"
+  , backgroundColor: "#1b1b1b"
   , display: "flex"
   , flexDirection: "column"
   , flexShrink: "0"
-  , boxShadow: "12px 0 40px #02061729"
   }
 
 searchBox :: CSS
 searchBox = css
-  { padding: "12px 16px 14px"
-  , borderBottom: "1px solid #182235"
+  { padding: "5px 8px 7px"
+  , borderBottom: "1px solid #303030"
   }
 
 sidebarContent :: CSS
@@ -51,37 +44,7 @@ sidebarContent = css
   { flex: "1"
   , minHeight: "0"
   , overflowY: "auto"
-  , padding: "14px 10px 20px"
-  }
-
-sidebarBranding :: CSS
-sidebarBranding = css
-  { padding: "12px 16px"
-  , fontSize: "10px"
-  , letterSpacing: "0.08em"
-  , textTransform: "uppercase"
-  , color: "#475569"
-  , borderTop: "1px solid #182235"
-  }
-
-sidebarHeading :: CSS
-sidebarHeading = css
-  { fontSize: "10px"
-  , fontWeight: "700"
-  , textTransform: "uppercase"
-  , letterSpacing: "0.12em"
-  , color: "#526078"
-  , padding: "0 8px"
-  , marginBottom: "10px"
-  }
-
-moduleLabel :: CSS
-moduleLabel = css
-  { padding: "7px 10px"
-  , fontSize: "12px"
-  , fontWeight: "650"
-  , color: "#a5b4fc"
-  , marginTop: "5px"
+  , padding: "5px 6px 12px"
   }
 
 exportButton :: Boolean -> CSS
@@ -89,27 +52,27 @@ exportButton isSelected = css
   { display: "block"
   , width: "100%"
   , textAlign: "left"
-  , padding: "8px 11px"
-  , marginBottom: "2px"
+  , padding: "4px 7px"
+  , marginBottom: "1px"
   , fontSize: "12px"
-  , fontWeight: if isSelected then "650" else "450"
-  , border: if isSelected then "1px solid #38bdf84d" else "1px solid transparent"
-  , borderRadius: "8px"
+  , lineHeight: "1.35"
+  , fontWeight: if isSelected then "600" else "400"
+  , border: "0"
+  , borderLeft: if isSelected then "2px solid #b3b3b3" else "2px solid transparent"
+  , borderRadius: "2px"
   , cursor: "pointer"
   , fontFamily: "inherit"
-  , color: if isSelected then "#f8fafc" else "#94a3b8"
-  , background: if isSelected then "linear-gradient(135deg, #164e63, #172554)" else "transparent"
-  , boxShadow: if isSelected then "0 8px 24px #02061752" else "none"
+  , color: if isSelected then "#f2f2f2" else "#a3a3a3"
+  , background: if isSelected then "#2a2a2a" else "transparent"
   }
 
--- Main panel
 panel :: CSS
 panel = css
   { position: "relative"
   , flex: "1"
   , minWidth: "0"
   , overflowY: "auto"
-  , padding: "0 28px 44px"
+  , padding: "0 16px 20px"
   }
 
 panelPlaceholder :: CSS
@@ -123,132 +86,98 @@ storyHeader = css
   , display: "flex"
   , alignItems: "center"
   , justifyContent: "space-between"
-  , gap: "18px"
-  , margin: "0 -28px 24px"
-  , padding: "17px 28px"
-  , borderBottom: "1px solid #1e293b"
-  , background: "#070a12e8"
-  , backdropFilter: "blur(18px)"
+  , gap: "10px"
+  , margin: "0 -16px 10px"
+  , padding: "7px 16px"
+  , borderBottom: "1px solid #303030"
+  , background: "#151515"
   }
 
 storyTitle :: CSS
-storyTitle = css { color: "#f8fafc", fontSize: "18px", fontWeight: "700", lineHeight: "1.25", margin: "2px 0 0" }
+storyTitle = css
+  { color: "#ededed"
+  , fontSize: "14px"
+  , fontWeight: "600"
+  , lineHeight: "1.3"
+  , margin: "0"
+  }
 
 toolbarButtons :: CSS
-toolbarButtons = css { display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end" }
+toolbarButtons = css { display: "flex", gap: "4px", flexWrap: "wrap", justifyContent: "flex-end" }
 
 layoutToggle :: CSS
 layoutToggle = css
-  { border: "1px solid #334155"
-  , borderRadius: "8px"
-  , background: "#111827"
-  , color: "#cbd5e1"
-  , padding: "7px 10px"
+  { border: "1px solid #3b3b3b"
+  , borderRadius: "3px"
+  , background: "#202020"
+  , color: "#c4c4c4"
+  , padding: "3px 6px"
   , cursor: "pointer"
   , fontSize: "11px"
-  , fontWeight: "650"
+  , lineHeight: "1.35"
+  , fontWeight: "500"
   , fontFamily: "inherit"
-  , boxShadow: "0 4px 14px #0206173d"
   }
 
--- Source viewer
 sourceToggle :: CSS
 sourceToggle = css
-  { marginTop: "10px"
-  , border: "1px solid #243247"
-  , borderRadius: "10px"
+  { marginTop: "5px"
+  , border: "1px solid #303030"
+  , borderRadius: "3px"
   , overflow: "hidden"
-  , background: "#0a101c"
+  , background: "#191919"
   }
 
 sourceSummary :: CSS
 sourceSummary = css
-  { padding: "11px 13px"
+  { padding: "5px 7px"
   , fontSize: "11px"
-  , fontWeight: "600"
-  , color: "#94a3b8"
+  , fontWeight: "400"
+  , color: "#999999"
   , cursor: "pointer"
   , fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace"
   , overflowWrap: "anywhere"
   }
 
-sourceBlock :: CSS
-sourceBlock = css
-  { backgroundColor: "#020617"
-  , border: "1px solid #334155"
-  , borderRadius: "8px"
-  , padding: "16px"
-  , overflow: "auto"
-  , margin: "0"
-  }
-
 sourceCode :: CSS
 sourceCode = css
-  { borderTop: "1px solid #1e293b"
-  , backgroundColor: "#050914"
+  { borderTop: "1px solid #303030"
+  , backgroundColor: "#111111"
   , fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace"
-  , fontSize: "13px"
-  , lineHeight: "1.65"
-  , color: "#cbd5e1"
+  , fontSize: "12px"
+  , lineHeight: "1.5"
+  , color: "#d0d0d0"
   }
 
--- Shared
 brand :: CSS
 brand = css
   { display: "flex"
-  , alignItems: "center"
-  , gap: "11px"
-  , padding: "17px 16px 10px"
-  }
-
-brandMark :: CSS
-brandMark = css
-  { display: "flex"
-  , alignItems: "center"
-  , justifyContent: "center"
-  , width: "30px"
-  , height: "30px"
-  , border: "1px solid #22d3ee66"
-  , borderRadius: "9px"
-  , background: "linear-gradient(145deg, #164e63, #172554)"
-  , color: "#cffafe"
-  , fontSize: "10px"
-  , fontWeight: "800"
-  , letterSpacing: "0.06em"
-  , boxShadow: "0 8px 22px #02061780"
+  , alignItems: "baseline"
+  , justifyContent: "space-between"
+  , gap: "8px"
+  , padding: "9px 10px 7px"
+  , borderBottom: "1px solid #303030"
   }
 
 brandName :: CSS
-brandName = css { color: "#f8fafc", fontSize: "13px", fontWeight: "750", letterSpacing: "-0.01em" }
+brandName = css { color: "#ededed", fontSize: "13px", fontWeight: "600" }
 
 brandMeta :: CSS
-brandMeta = css { color: "#64748b", fontSize: "10px", marginTop: "2px" }
+brandMeta = css { color: "#777777", fontSize: "10px" }
 
 emptyState :: CSS
 emptyState = css
-  { margin: "16px 8px"
-  , padding: "14px"
-  , border: "1px dashed #334155"
-  , borderRadius: "9px"
-  , color: "#64748b"
+  { padding: "7px"
+  , color: "#777777"
   , fontSize: "11px"
-  , lineHeight: "1.5"
-  }
-
-storyEyebrow :: CSS
-storyEyebrow = css
-  { color: "#67e8f9"
-  , fontSize: "9px"
-  , fontWeight: "750"
-  , letterSpacing: "0.13em"
-  , textTransform: "uppercase"
+  , lineHeight: "1.4"
   }
 
 sourceGroup :: CSS
-sourceGroup = css { marginTop: "18px", paddingTop: "2px" }
+sourceGroup = css { marginTop: "8px" }
 
 loadingState :: CSS
 loadingState = panel <> center <> muted
 
 muted :: CSS
-muted = css { color: "#64748b" }
+muted = css { color: "#777777" }

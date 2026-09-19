@@ -113,16 +113,13 @@ sidebar = component "Sidebar" \props -> React.do
   pure $
     nav { className: "ys-sidebar", style: S.sidebarNav }
       [ div { style: S.brand }
-          [ div { style: S.brandMark } (text "YS")
-          , div {}
-              [ div { style: S.brandName } (text "Yoga Stories")
-              , div { style: S.brandMeta } (text (show storyCount <> " stories in this workspace"))
-              ]
+          [ div { style: S.brandName } (text "Yoga Stories")
+          , div { style: S.brandMeta } (text (show storyCount <> " stories"))
           ]
       , div { style: S.searchBox }
           [ R.input
               { type: "text"
-              , placeholder: "Find a story…"
+              , placeholder: "Filter stories"
               , value: query
               , onChange: handler targetValue \v -> case v of
                   Just q -> setQuery q
@@ -131,13 +128,11 @@ sidebar = component "Sidebar" \props -> React.do
               }
           ]
       , div { style: S.sidebarContent }
-          [ div { style: S.sidebarHeading } (text "Library")
-          , if Array.null filtered then
-              div { style: S.emptyState } (text "No stories match this search.")
+          [ if Array.null filtered then
+              div { style: S.emptyState } (text "No matching stories.")
             else
               div {} (map (moduleGroup props) filtered)
           ]
-      , div { style: S.sidebarBranding } (text "Local component workshop")
       ]
   where
   moduleGroup props s = do
@@ -214,10 +209,7 @@ mainPanel = component "MainPanel" \props -> React.do
         Just l | l.name == modName ->
           div { className: "ys-main", style: S.panel }
             [ div { className: "ys-story-header", style: S.storyHeader }
-                [ div {}
-                    [ div { style: S.storyEyebrow } (text "Story preview")
-                    , h3 { style: S.storyTitle } (text key)
-                    ]
+                [ h3 { style: S.storyTitle } (text key)
                 , div { style: S.toolbarButtons }
                     [ button
                         { style: S.layoutToggle
@@ -252,8 +244,7 @@ sourceView Nothing = mempty
 sourceView (Just info) = do
   let label = moduleDisplayName info.moduleName
   div { style: S.sourceGroup }
-    [ div { style: S.storyEyebrow } (text "Source")
-    , case toMaybe info.componentSourceCode of
+    [ case toMaybe info.componentSourceCode of
         Nothing -> mempty
         Just code ->
           details { className: "ys-source-card", style: S.sourceToggle }
