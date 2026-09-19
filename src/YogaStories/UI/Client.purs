@@ -104,12 +104,19 @@ autoSelect stories sel = case sel.moduleName, sel.exportName of
 sidebar :: { stories :: Array StoryModule, selected :: Selection, onSelect :: String -> String -> Effect Unit } -> JSX
 sidebar = component "Sidebar" \props -> React.do
   query /\ setQuery <- React.useState' ""
-  let needle = String.toLower query
+  let needle = String.toLower (String.trim query)
+  let hasQuery = needle /= ""
   let
     storyCount = Array.foldl (\count storyModule -> count + Array.length storyModule.exports) 0 props.stories
-    filtered = props.stories # Array.filter \s ->
-      String.contains (String.Pattern needle) (String.toLower s.moduleName)
-        || Array.any (String.contains (String.Pattern needle) <<< String.toLower) s.exports
+    matches value = String.contains (String.Pattern needle) (String.toLower value)
+    filtered = props.stories # Array.mapMaybe \storyModule ->
+      if not hasQuery || matches storyModule.moduleName then
+        Just storyModule
+      else
+        let
+          matchingExports = Array.filter matches storyModule.exports
+        in
+          if Array.null matchingExports then Nothing else Just (storyModule { exports = matchingExports })
   pure $
     nav { className: "ys-sidebar", style: S.sidebarNav }
       [ div { style: S.brand }
@@ -131,11 +138,11 @@ sidebar = component "Sidebar" \props -> React.do
           [ if Array.null filtered then
               div { style: S.emptyState } (text "No matching stories.")
             else
-              div {} (map (moduleGroup props) filtered)
+              div {} (map (moduleGroup props hasQuery) filtered)
           ]
       ]
   where
-  moduleGroup props s = do
+  moduleGroup props filtering s = do
     let label = moduleDisplayName s.moduleName
     let isSelected = props.selected.moduleName == Just s.moduleName
     case s.exports of
@@ -146,7 +153,7 @@ sidebar = component "Sidebar" \props -> React.do
           }
           (text label)
       _ ->
-        detailsEl isSelected
+        detailsEl (isSelected || filtering)
           [ summaryEl (text label)
           , div {} (map (exportBtn props s.moduleName) s.exports)
           ]
